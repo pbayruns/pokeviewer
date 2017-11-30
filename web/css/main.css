@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Work+Sans:200,300,400,700');
 
 html, body {
 	height: 100%;
 	width: 100%;
+	overflow-x: hidden;
+	background: #139A43 !important;
+	font-family: 'Work Sans', sans-serif !important;
 }
 #wrapper{
-	background: #139A43;
 	height: 100%;
 	width: 100%;
 }
@@ -29,12 +32,123 @@ nav{
 	border: 5px solid #F5E3E0 !important;
 	border: solid 5px #FFF;
 }
-	
 
 .pokemon-img{
 	max-width: 100px;
 	display:block;
     margin:auto;
+}
+
+.pokemon-info-tabs {
+	margin-top: 75px;
+}
+.pokemon-info-tabs > li > .active {
+	
+}
+
+.display-top-row{
+	margin-top: 50px;
+}
+.image-cropper {
+	margin-bottom: 25px;
+	display:block;
+    margin:auto;
+    width: 50%;
+	max-width: 250px;
+	max-height: 250px;
+    overflow: hidden;
+    border-radius: 50%;
+	border: 3px solid #0DAB76;
+	background: none;
+}
+
+.pokemon-info-img{
+		margin-top: 50px;
+
+	display: inline;
+    margin: 0 auto;
+    height: auto;
+    width: 100%;
+}
+.pokemon-info-tabs > li {
+	color: #fff;
+}
+
+.pokemon-info-tabs > li > a {
+	color: #fff;
+}
+
+.skillbar {
+	position:relative;
+	display:block;
+	margin-bottom:15px;
+	width:100%;
+	background:#eee;
+	height:35px;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	-webkit-transition:0.4s linear;
+	-moz-transition:0.4s linear;
+	-ms-transition:0.4s linear;
+	-o-transition:0.4s linear;
+	transition:0.4s linear;
+	-webkit-transition-property:width, background-color;
+	-moz-transition-property:width, background-color;
+	-ms-transition-property:width, background-color;
+	-o-transition-property:width, background-color;
+	transition-property:width, background-color;
+}
+
+.skillbar-title {
+	position:absolute;
+	top:0;
+	left:0;
+width:110px;
+	font-weight:bold;
+	font-size:13px;
+	color:#ffffff;
+	background:#6adcfa;
+	-webkit-border-top-left-radius:3px;
+	-webkit-border-bottom-left-radius:4px;
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-bottomleft:3px;
+	border-top-left-radius:3px;
+	border-bottom-left-radius:3px;
+}
+
+.skillbar-title span {
+	display:block;
+	background:rgba(0, 0, 0, 0.1);
+	padding:0 20px;
+	height:35px;
+	line-height:35px;
+	-webkit-border-top-left-radius:3px;
+	-webkit-border-bottom-left-radius:3px;
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-bottomleft:3px;
+	border-top-left-radius:3px;
+	border-bottom-left-radius:3px;
+}
+
+.skillbar-bar {
+	height:35px;
+	width:0px;
+	background:#6adcfa;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+}
+
+.skill-bar-percent {
+	position:absolute;
+	right:10px;
+	top:0;
+	font-size:11px;
+	height:35px;
+	line-height:35px;
+	color:#ffffff;
+	color:rgba(0, 0, 0, 0.4);
 }
 
 /*0DAB76 139A43 0B5D1E 053B06 F5E3E0*/

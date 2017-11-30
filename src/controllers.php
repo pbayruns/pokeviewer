@@ -130,6 +130,10 @@ $app->get('/', function () use ($app) {
 ->bind('homepage')
 ;
 
+$app->get('/display', function () use ($app) {
+    return $app['twig']->render('pokemondisplay.html.twig', array());
+})->bind('display');
+
 $app->error(function (\Exception $e, Request $request, $code) use ($app) {
     if ($app['debug']) {
         return;
