@@ -1,5 +1,24 @@
 {% extends "layout.html.twig" %}
-
 {% block content %}
-    Welcome to your new Silex Application!
+{% include "navbar.html.twig" %}
+<div id="wrapper">
+	<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+	
+	<div class="row">
+			{% for pokemon in pokedex %}
+			<div class="col-xs-5 col-md-4 col-xl-3 pokemon-card">
+				<div class="card text-center">
+				  <img class="card-img-top pokemon-img" src="{{pokemon.url}}" alt="{{pokemon.name}}">
+				  <div class="card-block">
+					<h6 class="card-title">{{pokemon.name}} #{{pokemon.number}}</h6>
+				  </div>
+				</div>
+			</div>
+			{% endfor %}
+			
+			</div>
+</div>
+
+	</div>
+</div>
 {% endblock %}

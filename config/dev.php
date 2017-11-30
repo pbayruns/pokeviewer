@@ -8,6 +8,7 @@ require __DIR__.'/prod.php';
 
 // enable the debug mode
 $app['debug'] = true;
+$app['twig.options'] = array('cache' => __DIR__.'/../var/cache/twig', 'auto_reload' => true);
 
 $app->register(new MonologServiceProvider(), array(
     'monolog.logfile' => __DIR__.'/../var/logs/silex_dev.log',
@@ -16,3 +17,4 @@ $app->register(new MonologServiceProvider(), array(
 $app->register(new WebProfilerServiceProvider(), array(
     'profiler.cache_dir' => __DIR__.'/../var/cache/profiler',
 ));
+
