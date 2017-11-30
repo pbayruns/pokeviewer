@@ -5,7 +5,10 @@ use Silex\Provider\AssetServiceProvider;
 use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
+use Symfony\Component\Debug\ErrorHandler;
 
+ErrorHandler::register();
+date_default_timezone_set( 'America/Detroit' );
 $app = new Application();
 $app->register(new ServiceControllerServiceProvider());
 $app->register(new AssetServiceProvider());

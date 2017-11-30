@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div id="wrapper">
+    <div class="row display-top-row">
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+            <div class="image-cropper"><img class="pokemon-info-img" src="https://cdn.bulbagarden.net/upload/2/21/001Bulbasaur.png" alt="Card image cap"/></div>
+            <div class="card mb-3">
+                <div class="card-block">
+                    <h4 class="card-title">Card title</h4>
+                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+            <ul class="nav nav-tabs nav-fill pokemon-info-tabs">
+                <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-bar-chart fa-2x" aria-hidden="true"></i><br/>
+                    Stats</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-map-marker fa-2x" aria-hidden="true"></i><br/>
+                    Locations</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-graduation-cap fa-2x" aria-hidden="true"></i><br/>
+                    Learnset</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-bullseye fa-2x" aria-hidden="true"></i><br/>
+                    Type Effectiveness</a></li>
+            </ul>
+            <div>
+               
+              {% for stat_item in stats %}
+				
+				<div class="skillbar clearfix " data-percent="{{(stat_item.base_stat / 300) * 100}}%">
+                    <div class="skillbar-title" style="background: #ff0000;"><span>{{stat_item.stat.name}}</span></div>
+                    <div class="skillbar-bar" style="background: #ff0000;"></div>
+                    <div class="skill-bar-percent">{{stat_item.base_stat}}</div>
+                </div>
+                <!-- End Skill Bar -->
+            	{% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+jQuery(document).ready(function(){
+	jQuery('.skillbar').each(function(){
+		jQuery(this).find('.skillbar-bar').animate({
+			width:jQuery(this).attr('data-percent')
+		},700);
+	});
+});
+</script><!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+</head>
+
+<body>
+</body>
+</html>
+{% endblock %}
