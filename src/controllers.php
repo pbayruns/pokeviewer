@@ -16,6 +16,11 @@ $app->get( '/pokemon/id/{id}', function (Silex\Application $app, $id) use ( $app
 	if (!isset($pokemonData)) {
         $app->abort(404, "Pokemon $id does not exist.");
     }
+	foreach ($pokemonData['sprites'] as $key => $url) {
+		if(!empty($url)){
+			$pokemonData['sprites'][$key] = getImage($url);	
+		}
+	}
 	return $app[ 'twig' ]->render( 'pokemondisplay.html', $pokemonData); } 
 )->bind( 'display' );
 

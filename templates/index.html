@@ -5,7 +5,7 @@
     <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
         <div class="row"> 
            {% for poke in results %}
-				<div onclick="window.location='/pokemon/id/{{poke.id}}';" class="col-xs-5 col-md-4 col-xl-3 pokemon-card">
+				<div onclick="window.location='./pokemon/id/{{poke.id}}';" class="col-xs-5 col-md-4 col-xl-3 pokemon-card">
 					<div class="card text-center"> <img href="" class="card-img-top pokemon-img" src="/afdasf" alt="{{poke.name|title}}">
 						<div class="card-block">
 							<h6 class="card-title">{{poke.name|title}} #{{poke.id}}</h6>

@@ -2,49 +2,114 @@
 {% block content %}
 {% include "navbar.html" %}
 <div id="wrapper">
-    <div class="row display-top-row justify-content-center">
-          <h1>{{ name | title}}</h1><br>
-	</div>
-       <div class="row">
-        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
-            <div class="image-cropper"><img class="pokemon-info-img" src="{{sprites.front_default}}" alt="Card image cap"/></div>
-            <div class="card mb-3">
-                <div class="card-block">
-                    <h4 class="card-title">Card title</h4>
-                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                </div>
-            </div>
-        </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
+      <div class="image-cropper"><img class="pokemon-info-img" src="{{sprites.front_default}}" alt="Card image cap"/></div>
+      <div class="text-center">
+        <h1>{{ name | title}}</h1>
+        <h3>#{{order}}</h3>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
-            <ul class="nav nav-tabs nav-fill pokemon-info-tabs">
-                <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-bar-chart fa-2x" aria-hidden="true"></i><br/>
-                    Stats</a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-map-marker fa-2x" aria-hidden="true"></i><br/>
-                    Locations</a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-graduation-cap fa-2x" aria-hidden="true"></i><br/>
-                    Learnset</a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-bullseye fa-2x" aria-hidden="true"></i><br/>
-                    Type Effectiveness</a></li>
-            </ul>
-            <div>
-               
-              {% set colors = {"hp":"#ff0000", "attack":"#f08030", "defense":"#f8d030", "special-attack":"#6890f0", "special-defense":"#78c850", "speed":"#f85888"} %}
-              {% set names = {"hp":"HP", "attack":"Atk", "defense":"Def", "special-attack":"Sp. Atk", "special-defense":"Sp. Def", "speed":"Speed"} %}
-              {% for stat_item in stats %}
-				
-				<div class="skillbar clearfix " data-percent="{{(stat_item.base_stat / 255) * 100}}%">
-                    <div class="skillbar-title" style="background:{{attribute(colors, stat_item.stat.name)}};"><span>{{attribute(names, stat_item.stat.name)}}</span></div>
-                    <div class="skillbar-bar" style="background: {{attribute(colors, stat_item.stat.name)}};"></div>
-                    <div class="skill-bar-percent">{{stat_item.base_stat}}</div>
-                </div>
-                <!-- End Skill Bar -->
-            	{% endfor %}
-            </div>
-        </div>
+  </div>
+  <div class="row  justify-content-center">
+    <div class="card mb-3">
+      <div class="card-block">
+       {% for type_item in types %}
+        	<span class="type-display type-{{type_item.type.name}}">{{type_item.type.name | upper}}</span>
+        {% endfor %}
+        <br>
+        <strong>Abilities</strong>
+        <ul>
+        {% for ability_item in abilities %}
+        <li>
+        	<span class=""><a href="#">{{ability_item.ability.name | title}}</a></span><br>
+        	({{ability_item.ability.url}})<br>
+			(hidden: {{ability_item.is_hidden}})
+       </li>
+        {% endfor %}
+        </ul>
+        <h4 class="card-title">Card title</h4>
+        <p class="card-text">Base Exp:{{base_experience}}<br>
+			Height:{{height}}<br>
+			Weight:{{weight}}</p>
+      </div>
     </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3"> 
+      <!-- Nav tabs -->
+      <ul class="nav nav-pills nav-fill" role="tablist">
+        <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#stats" role="tab"><i class="fa fa-bar-chart fa-2x" aria-hidden="true"></i><br/>
+          Stats</a> </li>
+        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#locations" role="tab"><i class="fa fa-map-marker fa-2x" aria-hidden="true"></i><br/>
+          Locations</a> </li>
+        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#learnset" role="tab"><i class="fa fa-graduation-cap fa-2x" aria-hidden="true"></i><br/>
+          Learnset</a> </li>
+        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#type-defenses" role="tab"><i class="fa fa-shield  fa-2x" aria-hidden="true"></i><br/>
+          Type Defenses</a> </li>
+      </ul>
+      
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="stats" role="tabpanel">
+          <div> {% set colors = {"hp":"#ff0000", 
+            "attack":"#f08030", 
+            "defense":"#f8d030", 
+            "special-attack":"#6890f0", 
+            "special-defense":"#78c850", 
+            "speed":"#f85888"} 
+            %}
+            {% set names = {"hp":"HP", 
+            "attack":"Atk", 
+            "defense":"Def", 
+            "special-attack":"Sp. Atk", 
+            "special-defense":"Sp. Def", 
+            "speed":"Speed"} 
+            %}
+            {% for stat_item in stats %}
+            <div class="skillbar clearfix " data-percent="{{(stat_item.base_stat / 255) * 100}}%">
+              <div class="skillbar-title" style="background:{{attribute(colors, stat_item.stat.name)}};"> <span>{{attribute(names, stat_item.stat.name)}}</span> </div>
+              <div class="skillbar-bar" style="background: {{attribute(colors, stat_item.stat.name)}};"></div>
+              <div class="skill-bar-percent">{{stat_item.base_stat}}</div>
+            </div>
+            <!-- End Skill Bar --> 
+            {% endfor %} </div>
+        </div>
+        <div class="tab-pane fade" id="locations" role="tabpanel">...</div>
+        <div class="tab-pane fade" id="learnset" role="tabpanel">
+          <div>
+            <table class="table table-striped table-fit table-hover">
+              <thead>
+                <tr>
+                  <th>Lvl.</th>
+                  <th>Move</th>
+                  <th>Type</th>
+                  <th>Cat.</th>
+                  <th>Power</th>
+                  <th>Acc.</th>
+                </tr>
+              </thead>
+              <tbody>
+
+              {% for move_entry in moves %}
+              <tr>
+                <td>{{move_entry.version_group_details[0].level_learned_at}}</td>
+                <td><a href="#">{{move_entry.move.name | title}}</a></td>
+                <td>fire</td>
+                <td>({{move_entry.move.url}})</td>
+                <td>90</td>
+                <td>90</td>
+              </tr>
+              {% endfor %}
+                </tbody>
+              
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="type-defenses" role="tabpanel">...</div>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
 jQuery(document).ready(function(){
@@ -54,14 +119,5 @@ jQuery(document).ready(function(){
 		},700);
 	});
 });
-</script><!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Untitled Document</title>
-</head>
-
-<body>
-</body>
-</html>
+</script> 
 {% endblock %}
