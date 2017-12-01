@@ -9,138 +9,30 @@ use Symfony\ Component\ HttpKernel\ Exception\ NotFoundHttpException;
 include 'util.php';
 //Request::setTrustedProxies(array('127.0.0.1'));
 
-$app->get( '/', function ()use( $app ) {
-	return $app[ 'twig' ]->render( 'index.html', array( 'pokedex' => array(
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		),
-		array(
-			'name' => 'Bulbasaur',
-			'number' => 0,
-			'url' => 'https://img.pokemondb.net/sprites/x-y/normal/bulbasaur.png'
-		)
-	) ) );
-} )->bind( 'homepage' );
-
-$app->get( '/pokemon/id/{id}', function (Silex\Application $app, $id) use( $app ) {
-
-	$POKEMON_DATA_FILE_NAME = "Pokemon-" . $id . ".txt";
-	$API_URL = "https://pokeapi.co/api/v2/pokemon/" . $id;
-	$CACHE_LENGTH_HOURS = 48;
-	$pokemonData = get_content($POKEMON_DATA_FILE_NAME,$API_URL,$CACHE_LENGTH_HOURS,$fn = '',$fn_args = '');
+//specific pokemon endpoint
+$app->get( '/pokemon/id/{id}', function (Silex\Application $app, $id) use ( $app ) {
+	$API_URL = "http://pokeapi.co/api/v2/pokemon/" . $id;
+	$pokemonData = json_decode(getJson($API_URL), true);
 	if (!isset($pokemonData)) {
         $app->abort(404, "Pokemon $id does not exist.");
     }
 	return $app[ 'twig' ]->render( 'pokemondisplay.html', $pokemonData); } 
 )->bind( 'display' );
 
+//list of all pokemon
+$app->get( '/pokemon', function () use ( $app ) {
+	$API_URL = "http://pokeapi.co/api/v2/pokemon/?limit=10000000";
+	$pokemonList = json_decode(getJson($API_URL), true);
+	//add the pokemon ids to the results
+	//echo var_dump($pokemonList['results']);
+	foreach($pokemonList['results'] as &$poke){
+		$poke['id'] = basename($poke['url']);
+	}
+	return $app[ 'twig' ]->render( 'index.html', $pokemonList );
+} )->bind( 'pokemonlist' );
+
+
+//errors
 $app->error( function ( \Exception $e, Request $request, $code )use( $app ) {
 	if ( $app[ 'debug' ] ) {
 		return;

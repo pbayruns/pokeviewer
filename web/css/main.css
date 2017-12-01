@@ -31,6 +31,7 @@ nav{
 	background: rgba(255,255,255,0.50) !important;
 	border: 5px solid #F5E3E0 !important;
 	border: solid 5px #FFF;
+	cursor: pointer;
 }
 
 .pokemon-img{
@@ -51,25 +52,29 @@ nav{
 }
 .image-cropper {
 	margin-bottom: 25px;
+	margin-top: 25px;
+    margin-left:auto;
+	margin-right:auto;
+	
 	display:block;
-    margin:auto;
     width: 50%;
 	max-width: 250px;
 	max-height: 250px;
     overflow: hidden;
     border-radius: 50%;
-	border: 3px solid #0DAB76;
+	border: 3px solid #75F4C9;
 	background: none;
 }
 
 .pokemon-info-img{
-		margin-top: 50px;
-
+	margin-top: 50px;
 	display: inline;
     margin: 0 auto;
     height: auto;
     width: 100%;
+	background: rgba(13,171,118,0.41);
 }
+
 .pokemon-info-tabs > li {
 	color: #fff;
 }

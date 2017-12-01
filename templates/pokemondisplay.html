@@ -2,9 +2,12 @@
 {% block content %}
 {% include "navbar.html" %}
 <div id="wrapper">
-    <div class="row display-top-row">
+    <div class="row display-top-row justify-content-center">
+          <h1>{{ name | title}}</h1><br>
+	</div>
+       <div class="row">
         <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
-            <div class="image-cropper"><img class="pokemon-info-img" src="https://cdn.bulbagarden.net/upload/2/21/001Bulbasaur.png" alt="Card image cap"/></div>
+            <div class="image-cropper"><img class="pokemon-info-img" src="{{sprites.front_default}}" alt="Card image cap"/></div>
             <div class="card mb-3">
                 <div class="card-block">
                     <h4 class="card-title">Card title</h4>
@@ -28,11 +31,13 @@
             </ul>
             <div>
                
+              {% set colors = {"hp":"#ff0000", "attack":"#f08030", "defense":"#f8d030", "special-attack":"#6890f0", "special-defense":"#78c850", "speed":"#f85888"} %}
+              {% set names = {"hp":"HP", "attack":"Atk", "defense":"Def", "special-attack":"Sp. Atk", "special-defense":"Sp. Def", "speed":"Speed"} %}
               {% for stat_item in stats %}
 				
-				<div class="skillbar clearfix " data-percent="{{(stat_item.base_stat / 300) * 100}}%">
-                    <div class="skillbar-title" style="background: #ff0000;"><span>{{stat_item.stat.name}}</span></div>
-                    <div class="skillbar-bar" style="background: #ff0000;"></div>
+				<div class="skillbar clearfix " data-percent="{{(stat_item.base_stat / 255) * 100}}%">
+                    <div class="skillbar-title" style="background:{{attribute(colors, stat_item.stat.name)}};"><span>{{attribute(names, stat_item.stat.name)}}</span></div>
+                    <div class="skillbar-bar" style="background: {{attribute(colors, stat_item.stat.name)}};"></div>
                     <div class="skill-bar-percent">{{stat_item.base_stat}}</div>
                 </div>
                 <!-- End Skill Bar -->

@@ -1,35 +1,67 @@
 <?php 
-/* gets the contents of a file if it exists, otherwise grabs and caches */
-function get_content($file,$url,$hours = 48,$fn = '',$fn_args = '') {
-	//vars
-	$tz = 'America/New_York';
-	$tz_obj = new DateTimeZone($tz);
-	$now = new DateTime("now", $tz_obj);
-	$expire_time = $hours * 60 * 60; 
-	$file_time = filemtime($file);
-	//decisions, decisions
-	if(file_exists($file) && ($now - $expire_time < $file_time)) {
-		//echo 'returning from cached file';
-		return file_get_contents($file);
-	}
-	else {
-		$content = get_url($url);
-		if($fn) { $content = $fn($content,$fn_args); }
-		$content.= '<!-- cached:  '.$now.'-->';
-		file_put_contents($file,$content);
-		//echo 'retrieved fresh from '.$url.':: '.$content;
-		return $content;
-	}
+function getJson($url) {
+    // cache files are created like cache/abcdef123456...
+    $cacheFile = '.' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . md5($url);
+
+    if (file_exists($cacheFile)) {
+        $fh = fopen($cacheFile, 'r');
+        $cacheTime = trim(fgets($fh));
+
+        // if data was cached recently, return cached data
+        if ($cacheTime > strtotime('-3 days')) {
+            return fread($fh, filesize($cacheFile));
+        }
+
+        // else delete cache file
+        fclose($fh);
+        unlink($cacheFile);
+    }
+
+    $client = new GuzzleHttp\Client();
+	$response =  $client->request('GET', $url, ['verify' => false]);
+	$json = $response->getBody();
+	
+    $fh = fopen($cacheFile, 'w');
+    fwrite($fh, time() . "\n");
+    fwrite($fh, $json);
+    fclose($fh);
+
+    return $json;
 }
 
-/* gets content from a URL via curl */
-function get_url($url) {
-	$ch = curl_init();
-	curl_setopt($ch,CURLOPT_URL,$url);
-	curl_setopt($ch,CURLOPT_RETURNTRANSFER,1); 
-	curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,5);
-	$content = curl_exec($ch);
-	curl_close($ch);
-	return $content;
+function getImage($url){
+
+// Time to cache the files (here: 1 week)
+define('time_to_cache', 604800);
+
+// Create a local file representation
+$local = '.' . DIRECTORY_SEPARATOR . 
+		'cache' . DIRECTORY_SEPARATOR .  
+		'images' . DIRECTORY_SEPARATOR .
+		md5($url);
+
+// Determine whether the local file is too old
+if (@filemtime($local) + time_to_cache < time()) {
+    // Download a fresh copy
+    copy ($url, $local);
+
+    // Store headers in case we need them (see alternative below)
+    file_put_contents($local . '.hdr', join($http_response_header, "\n"));
+}
+
+// Solution 1: Redirect to the local cache file
+header('Location: ' . urlencode($local));
+exit();
+
+// Alternative: Send headers and the actual file
+// Note that this might cause problems, e.g. due
+// to cache fields and the like.
+
+// Read and send headers
+foreach(file($local . '.hdr') as $line)
+    header($line);
+
+// Read and send the actual file
+readfile($local);
 }
 ?>
