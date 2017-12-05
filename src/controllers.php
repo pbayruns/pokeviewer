@@ -9,6 +9,14 @@ use Symfony\ Component\ HttpKernel\ Exception\ NotFoundHttpException;
 include 'util.php';
 //Request::setTrustedProxies(array('127.0.0.1'));
 
+const URL_ALL_LIMIT = 10000000;
+function addIDsToResultList(array $resultData){
+	foreach($resultData['results'] as &$result){
+		$result['id'] = getEndingID($result['url']);
+	}
+	return $resultData;
+}
+
 function getIDPokemonList(array $pokemonList){
 	foreach($pokemonList as &$poke){
 		$poke = addPokemonID($poke);
@@ -59,7 +67,7 @@ $app->get( '/pokemon/{id}', function (Silex\Application $app, $id) use ( $app ) 
 
 //list of all pokemon
 $app->get( '/pokemon', function () use ( $app ) {
-	$API_URL = "http://pokeapi.co/api/v2/pokemon/?limit=10000000";
+	$API_URL = "http://pokeapi.co/api/v2/pokemon/?limit=" . URL_ALL_LIMIT;
 	$pokemonList = json_decode(getJson($API_URL), true);
 	$pokemonList['results'] = getIDPokemonList($pokemonList['results']);
 	return $app[ 'twig' ]->render( 'index.html', $pokemonList );
@@ -78,11 +86,16 @@ $app->get( '/ability/{id}', function (Silex\Application $app, $id) use ( $app ) 
 $app->get( '/move/{id}', function (Silex\Application $app, $id) use ( $app ) {
 	$API_URL = "http://pokeapi.co/api/v2/move/" . $id;
 	$moveData = json_decode(getJson($API_URL), true);
-	if (!isset($moveData)) {
-        $app->abort(404, "Move $id does not exist.");
-    }
 	return $app[ 'twig' ]->render( 'move.html', $moveData); } 
 )->bind( 'move' );
+
+$app->get( '/moves', function () use ( $app ) {
+	$API_URL = "http://pokeapi.co/api/v2/move/?limit=" . URL_ALL_LIMIT;
+	$moveData = json_decode(getJson($API_URL), true);
+
+	$moveData = addIDsToResultList($moveData);
+	return $app[ 'twig' ]->render( 'movelist.html', $moveData); } 
+)->bind( 'movelist' );
 
 //errors
 $app->error( function ( \Exception $e, Request $request, $code )use( $app ) {
