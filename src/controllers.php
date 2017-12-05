@@ -75,6 +75,15 @@ $app->get( '/ability/{id}', function (Silex\Application $app, $id) use ( $app ) 
 	return $app[ 'twig' ]->render( 'ability.html', $abilityData); } 
 )->bind( 'ability' );
 
+$app->get( '/move/{id}', function (Silex\Application $app, $id) use ( $app ) {
+	$API_URL = "http://pokeapi.co/api/v2/move/" . $id;
+	$moveData = json_decode(getJson($API_URL), true);
+	if (!isset($moveData)) {
+        $app->abort(404, "Move $id does not exist.");
+    }
+	return $app[ 'twig' ]->render( 'move.html', $moveData); } 
+)->bind( 'move' );
+
 //errors
 $app->error( function ( \Exception $e, Request $request, $code )use( $app ) {
 	if ( $app[ 'debug' ] ) {
