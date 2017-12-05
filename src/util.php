@@ -1,7 +1,7 @@
 <?php 
 function getJson($url) {
     // cache files are created like cache/abcdef123456...
-    $cacheFile = '.' . DIRECTORY_SEPARATOR .'cache' . DIRECTORY_SEPARATOR . md5($url);
+    $cacheFile = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .'cache' . DIRECTORY_SEPARATOR . md5($url);
 	
     if (file_exists($cacheFile)) {
         $fh = fopen($cacheFile, 'r');
@@ -18,7 +18,7 @@ function getJson($url) {
     }
 
     $client = new GuzzleHttp\Client();
-	$response =  $client->request('GET', $url, ['verify' => false]);
+	$response =  $client->request('GET', $url);
 	$json = $response->getBody();
 	
     $fh = fopen($cacheFile, 'w');
@@ -35,7 +35,7 @@ function getImage($url){
 if (!defined('time_to_cache')) define('time_to_cache', 604800);
 
 // Create a local file representation
-$local = '.' . DIRECTORY_SEPARATOR .'cache' . DIRECTORY_SEPARATOR .  
+$local = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .'cache' . DIRECTORY_SEPARATOR .  
 		'images' . DIRECTORY_SEPARATOR .
 		md5($url);
 

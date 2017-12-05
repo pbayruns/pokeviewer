@@ -9,33 +9,71 @@ use Symfony\ Component\ HttpKernel\ Exception\ NotFoundHttpException;
 include 'util.php';
 //Request::setTrustedProxies(array('127.0.0.1'));
 
-//specific pokemon endpoint
-$app->get( '/pokemon/id/{id}', function (Silex\Application $app, $id) use ( $app ) {
-	$API_URL = "http://pokeapi.co/api/v2/pokemon/" . $id;
-	$pokemonData = json_decode(getJson($API_URL), true);
-	if (!isset($pokemonData)) {
-        $app->abort(404, "Pokemon $id does not exist.");
-    }
-	foreach ($pokemonData['sprites'] as $key => $url) {
+function getIDPokemonList(array $pokemonList){
+	foreach($pokemonList as &$poke){
+		$poke = addPokemonID($poke);
+	}
+	return $pokemonList;
+}
+
+function addPokemonID(array $pokemon){
+	$pokemon['id'] = getEndingID($pokemon['url']);
+	return $pokemon;
+}
+
+function getPokemonWithCacheURLS(array $pokemon){
+	foreach ($pokemon['sprites'] as $key => $url) {
 		if(!empty($url)){
-			$pokemonData['sprites'][$key] = getImage($url);	
+			$pokemon['sprites'][$key] = getImage($url);	
 		}
 	}
-	return $app[ 'twig' ]->render( 'pokemondisplay.html', $pokemonData); } 
+	return $pokemon;
+}
+
+function getAbilityPokemonWithID($abilityList){
+	
+	foreach($abilityList['pokemon'] as &$pokemon){
+		$pokemon['pokemon'] = addPokemonID($pokemon['pokemon']);
+	}
+	return $abilityList;
+}
+
+function getEndingID($url){
+	if(substr($url, -1) == '/') {
+		$url = substr($url, 0, -1);
+	}
+	$url_array = explode('/',$url);
+	return end($url_array);
+}
+
+//specific pokemon endpoint
+$app->get( '/pokemon/{id}', function (Silex\Application $app, $id) use ( $app ) {
+	$API_URL = "http://pokeapi.co/api/v2/pokemon/" . $id;
+	$pokemon = json_decode(getJson($API_URL), true);
+	if (!isset($pokemon)) {
+        $app->abort(404, "Pokemon $id does not exist.");
+    }
+	$pokemon = getPokemonWithCacheURLS($pokemon);
+	return $app[ 'twig' ]->render( 'pokemondisplay.html', $pokemon); } 
 )->bind( 'display' );
 
 //list of all pokemon
 $app->get( '/pokemon', function () use ( $app ) {
 	$API_URL = "http://pokeapi.co/api/v2/pokemon/?limit=10000000";
 	$pokemonList = json_decode(getJson($API_URL), true);
-	//add the pokemon ids to the results
-	//echo var_dump($pokemonList['results']);
-	foreach($pokemonList['results'] as &$poke){
-		$poke['id'] = basename($poke['url']);
-	}
+	$pokemonList['results'] = getIDPokemonList($pokemonList['results']);
 	return $app[ 'twig' ]->render( 'index.html', $pokemonList );
 } )->bind( 'pokemonlist' );
 
+$app->get( '/ability/{id}', function (Silex\Application $app, $id) use ( $app ) {
+	$API_URL = "http://pokeapi.co/api/v2/ability/" . $id;
+	$abilityData = json_decode(getJson($API_URL), true);
+	if (!isset($abilityData)) {
+        $app->abort(404, "Ability $id does not exist.");
+    }
+	$abilityData = getAbilityPokemonWithID($abilityData);
+	return $app[ 'twig' ]->render( 'ability.html', $abilityData); } 
+)->bind( 'ability' );
 
 //errors
 $app->error( function ( \Exception $e, Request $request, $code )use( $app ) {
