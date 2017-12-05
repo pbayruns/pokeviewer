@@ -1,7 +1,8 @@
 <?php
 
 ini_set( 'display_errors', 0 );
-
+//define('ABSPATH', dirname(__FILE__));
+define('ABSPATH', 'pokeviewer');
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $app = require __DIR__ . '/../src/app.php';
