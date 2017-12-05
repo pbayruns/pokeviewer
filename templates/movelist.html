@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div id="wrapper">
+    <div class="row justify-content-center">
+        <table class="table table-fit">
+            <thead>
+                <tr>
+                    <th>Move</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+            {% for move in results %}
+            <tr>
+                <td><a href="/move/{{move.id}}">{{move.name|title}}</a></td>
+            </tr>
+            {% endfor %}
+                </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 
