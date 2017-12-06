@@ -10,19 +10,23 @@ use Symfony\ Component\ HttpKernel\ Exception\ NotFoundHttpException;
 include 'util.php';
 const API_ROOT = 'http://pokeapi.co/api/v2/';
 const ALL_POKEMON = 'pokemonlist';
-const SPECIFIC_POKEMON = 'pokemondisplay';
+const SPECIFIC_POKEMON = 'pokemon';
 const ALL_ABILITIES = 'abilitylist';
-const SPECIFIC_ABILITY = 'abilitydisplay';
+const SPECIFIC_ABILITY = 'ability';
+const ALL_MOVES = 'movelist';
+const SPECIFIC_MOVE = 'move';
 const EXT = '.HTML';
 const URLS = array(
 	SPECIFIC_POKEMON => '/pokemon/{id}',
 	ALL_POKEMON => '/pokemon',
 	SPECIFIC_ABILITY => '/abilities/{id}',
-	ALL_ABILITIES => '/abilities'
+	ALL_ABILITIES => '/abilities',
+	SPECIFIC_MOVE => '/moves/{id}',
+	ALL_MOVES => '/moves'
 );
+const URL_ALL_LIMIT = 10000000;
 //Request::setTrustedProxies(array('127.0.0.1'));
 
-const URL_ALL_LIMIT = 10000000;
 function addIDsToResultList(array $resultData){
 	foreach($resultData['results'] as &$result){
 		$result['id'] = getEndingID($result['url']);
@@ -69,56 +73,26 @@ function getEndingID($url){
 
 //specific pokemon endpoint
 $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( $app ) {
-
 	$API_URL = API_ROOT . "pokemon/" . $id;
-	$pokemonData = json_decode(getJson($API_URL), true);
-	if (!isset($pokemonData)) {
-        $app->abort(404, "Pokemon $id does not exist.");
-    }
-	foreach ($pokemonData['sprites'] as $key => $url) {
-		if(!empty($url)){
-			$pokemonData['sprites'][$key] = getImage($url);	
-		}
-	}
-	foreach ($pokemonData['abilities'] as &$ability) {
-		$ability['ability']['id'] = basename($ability['ability']['url']);
-	}
-	return $app[ 'twig' ]->render( SPECIFIC_POKEMON.EXT, $pokemonData); } 
-)->bind( SPECIFIC_POKEMON );
-
-//list of all pokemon
-$app->get( URLS[ALL_POKEMON], function () use ( $app ) {
-	$API_URL = API_ROOT . "pokemon/?limit=10000000";
-	$pokemonList = json_decode(getJson($API_URL), true);
-	foreach($pokemonList['results'] as &$poke){
-		$poke['id'] = basename($poke['url']);
-	}
-	return $app[ 'twig' ]->render(ALL_POKEMON.EXT, $pokemonList );
-} )->bind( ALL_POKEMON );
-
-//specific ability endpoint
-$app->get( URLS[SPECIFIC_ABILITY], function (Silex\Application $app, $id) use ( $app ) {
-	$API_URL = API_ROOT . "ability/" . $id;
-$app->get( '/pokemon/{id}', function (Silex\Application $app, $id) use ( $app ) {
-	$API_URL = "http://pokeapi.co/api/v2/pokemon/" . $id;
 	$pokemon = json_decode(getJson($API_URL), true);
 	if (!isset($pokemon)) {
         $app->abort(404, "Pokemon $id does not exist.");
     }
 	$pokemon = getPokemonWithCacheURLS($pokemon);
-	return $app[ 'twig' ]->render( 'pokemondisplay.html', $pokemon); } 
-)->bind( 'display' );
+	return $app[ 'twig' ]->render( SPECIFIC_POKEMON . EXT, $pokemon); } 
+)->bind( SPECIFIC_POKEMON );
 
 //list of all pokemon
-$app->get( '/pokemon', function () use ( $app ) {
-	$API_URL = "http://pokeapi.co/api/v2/pokemon/?limit=" . URL_ALL_LIMIT;
+$app->get( URLS[ALL_POKEMON], function () use ( $app ) {
+	$API_URL = API_ROOT . "pokemon/?limit=" . URL_ALL_LIMIT;
 	$pokemonList = json_decode(getJson($API_URL), true);
 	$pokemonList['results'] = getIDPokemonList($pokemonList['results']);
-	return $app[ 'twig' ]->render( 'index.html', $pokemonList );
-} )->bind( 'pokemonlist' );
+	return $app[ 'twig' ]->render( ALL_POKEMON . EXT, $pokemonList );
+} )->bind( ALL_POKEMON );
 
-$app->get( '/ability/{id}', function (Silex\Application $app, $id) use ( $app ) {
-	$API_URL = "http://pokeapi.co/api/v2/ability/" . $id;
+//specific ability endpoint
+$app->get( URLS[SPECIFIC_ABILITY], function (Silex\Application $app, $id) use ( $app ) {
+	$API_URL = API_ROOT . "ability/" . $id;
 	$abilityData = json_decode(getJson($API_URL), true);
 	if (!isset($abilityData)) {
         $app->abort(404, "Ability $id does not exist.");
@@ -127,19 +101,19 @@ $app->get( '/ability/{id}', function (Silex\Application $app, $id) use ( $app ) 
 	return $app[ 'twig' ]->render( SPECIFIC_ABILITY . EXT, $abilityData); } 
 )->bind( SPECIFIC_ABILITY );
 
-$app->get( '/move/{id}', function (Silex\Application $app, $id) use ( $app ) {
-	$API_URL = "http://pokeapi.co/api/v2/move/" . $id;
-	$moveData = json_decode(getJson($API_URL), true);
-	return $app[ 'twig' ]->render( 'move.html', $moveData); } 
-)->bind( 'move' );
 
-$app->get( '/moves', function () use ( $app ) {
+$app->get( URLS[SPECIFIC_MOVE], function (Silex\Application $app, $id) use ( $app ) {
+	$API_URL = API_ROOT . "move/" . $id;
+	$moveData = json_decode(getJson($API_URL), true);
+	return $app[ 'twig' ]->render( SPECIFIC_MOVE.EXT, $moveData); } 
+)->bind( SPECIFIC_MOVE );
+
+$app->get( URLS[ALL_MOVES], function () use ( $app ) {
 	$API_URL = "http://pokeapi.co/api/v2/move/?limit=" . URL_ALL_LIMIT;
 	$moveData = json_decode(getJson($API_URL), true);
-
 	$moveData = addIDsToResultList($moveData);
-	return $app[ 'twig' ]->render( 'movelist.html', $moveData); } 
-)->bind( 'movelist' );
+	return $app[ 'twig' ]->render( ALL_MOVES.EXT, $moveData); } 
+)->bind( ALL_MOVES );
 
 //errors
 $app->error( function ( \Exception $e, Request $request, $code )use( $app ) {

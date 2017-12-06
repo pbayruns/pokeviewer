@@ -2,11 +2,7 @@
 
 function getJson($url) {
     // cache files are created like cache/abcdef123456...
-<<<<<<< HEAD
     $cacheFile = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . md5($url);
-=======
-    $cacheFile = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .'cache' . DIRECTORY_SEPARATOR . md5($url);
->>>>>>> 04655665c411f08190b13bf758824024fe716a1f
 	
     if (file_exists($cacheFile)) {
         $fh = fopen($cacheFile, 'r');
@@ -40,11 +36,7 @@ function getImage($url){
 if (!defined('time_to_cache')) define('time_to_cache', 604800);
 
 // Create a local file representation
-<<<<<<< HEAD
 $local = $_SERVER['DOCUMENT_ROOT']  . DIRECTORY_SEPARATOR .'cache' . DIRECTORY_SEPARATOR .  
-=======
-$local = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR .'cache' . DIRECTORY_SEPARATOR .  
->>>>>>> 04655665c411f08190b13bf758824024fe716a1f
 		'images' . DIRECTORY_SEPARATOR .
 		md5($url);
 
