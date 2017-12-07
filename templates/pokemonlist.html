@@ -19,7 +19,7 @@
 		<div onclick="window.location='{{poke.id}}';" class="pokemon-card type-{{poke.types[0].identifier}}  filter all {{typestring}}">
 			<div class="inner-pokemon-card text-center">
 					
-				<img href="" class="card-img-top pokemon-img" src="/images/pokemon/main-sprites/black-white/{{poke.id}}" alt="{{poke.identifier|title}}">
+				<img href="" class="card-img-top pokemon-img" src="/images/pokemon/main-sprites/black-white/{{poke.id}}.png" alt="{{poke.identifier|title}}">
 				<div class="card-block">
 					<h6 class="card-title">{{poke.identifier|title}} #{{poke.order}}</h6>
 					{% for type in poke.types %}

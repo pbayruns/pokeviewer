@@ -5,45 +5,75 @@
     <div class="row justify-content-center">
         <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
             <div class="jumbotron ability-jumbotron">
-                <h1 class="display-3 text-center">{{ name | title}}</h1>
-                {% if is_main_series %}
-                <h3 class="text-center"><a class="ability-link" href="{{generation.url}}">{{generation.name|title}}</a> </h3>
-                {% endif %}
-                <h5 class="text-center">(Ability)</h5>
-                {% set break = 0 %}
-                {% for entry in effect_entries %}
-                {% if entry.language.name == "en" %}
-                <p class="lead">{{entry.short_effect}}</p>
+                <h1 class="display-3 text-center">{{ identifier | title}}</h1>
+                <h5 class="text-center">
+                	(<a class="ability-link" href="#">
+                		Gen {{generation_id}}
+                	</a> 
+					{% if is_main_series %}
+						(Main Series)
+					{% endif %}
+					Ability)
+                </h5>
+                
+                
+                <p class="lead">{{short_effect}}</p>
                 <hr class="my-4">
                 <button class="btn btn-md btn-transparent btn-red" type="button" data-toggle="collapse" data-target="#ability-details" aria-expanded="false" aria-controls="ability-details"> Show/Hide Details </button>
-                <div class="collapse" id="ability-details"> <strong>Full Effect:</strong> {{entry.effect}} </div>
-                {% endif %}
-                {% endfor %} </div>
+                <div class="collapse" id="ability-details"> <strong>Full Effect:</strong> {{effect}} </div>
+ </div>
         </div>
     </div>
     <div class="row  justify-content-center">
-        <h3>Pokemon with {{ name | title}}</h3>
+        <h3>Pokemon with {{ identifier | title}}</h3>
     </div>
     <div class="row  justify-content-center">
         <table class="table table-striped table-fit table-hover">
             <thead>
                 <tr>
                     <th>Pokemon</th>
-                    <th>Slot</th>
                     <th>Type</th>
+                    <th>Ability 1</th>
+            		<th>Ability 2</th>
+               		<th>Ability 3</th>
                 </tr>
             </thead>
             <tbody>
             
             {% for poke in pokemon %}
-            {% set type = "Standard" %}
-            {% if poke.is_hidden %} 
-            {% set type = "Hidden" %} 
-            {% endif %}
-            <tr>
-                <td><a href="/pokemon/{{poke.pokemon.id}}">{{poke.pokemon.name | title }}</a></td>
-                <td>{{poke.slot}}</td>
-                <td>{{type}}</td>
+            <tr valign="middle" class="center">
+                <td> <a href="/pokemon/{{poke.id}}"><img class="pokemon-img-small" src="/images/pokemon/main-sprites/black-white/{{poke.id}}.png" alt="{{poke.identifier|title}}">{{poke.identifier | title }}</a></td>
+                <td>
+                {% for type in poke.types %}
+               	 <a href="/types/{{type.id}}" class="type-display type-{{type.identifier}}">
+               	 	{{type.identifier|upper}}
+               	 </a>
+                {% endfor %}
+                </td>
+                <td>
+                {% if (poke.abilities[1]) is defined %}
+                	<a href="/abilities/{{poke.abilities[1].id}}">
+                	{{poke.abilities[1].identifier | title}}</a>
+                {% else %}
+                	--
+                {% endif %}
+                </td>
+                <td>
+                {% if (poke.abilities[2]) is defined %}
+                	<a href="/abilities/{{poke.abilities[2].id}}">
+                	{{poke.abilities[2].identifier | title}}</a>
+                {% else %}
+                	--
+                {% endif %}
+                </td>
+                <td>
+                {% if (poke.abilities[3]) is defined %}
+                	<a href="/abilities/{{poke.abilities[3].id}}">
+                	{{poke.abilities[3].identifier | title}}</a>
+                {% else %}
+                	--
+                {% endif %}
+                </td>
             </tr>
             {% endfor %}
                 </tbody>

@@ -118,6 +118,13 @@ nav{
 ******SPECIFIC POKEMON PAGE***********
 **************************************
 */
+
+.pokemon-img-small{
+	cursor: pointer;
+	max-width: 75px;
+	display:block;
+    margin:auto;
+}
 .pokemon-img{
 	max-width: 100px;
 	display:block;
@@ -199,6 +206,10 @@ nav{
 
 .table-fit {
 	width: auto !important;
+}
+
+.table > tbody > tr > td {
+     vertical-align: middle;
 }
 
 .table-moves-level-up{

@@ -172,8 +172,14 @@ function getJSONString($fields){
 }
 
 function getQueryJSONArray($name, $fields){
+	return getQueryJSONArrayAs($name, $fields, true);
+}
+function getQueryJSONArrayAs($name, $fields, $withAS){
 	$fields = getJSONString($fields);
-	$query = "'{ ''".$name."'': [' || GROUP_CONCAT(DISTINCT ".$fields.") || '] }' AS " .$name;
+	$query = "'{ ''".$name."'': [' || GROUP_CONCAT(DISTINCT ".$fields.") || '] }'";
+	if($withAS){
+		$query .= " AS " .$name;
+	}
 	return $query;
 }
 
@@ -357,12 +363,111 @@ $app->get( URLS[ALL_POKEMON], function () use ( $app ) {
 
 //specific ability endpoint
 $app->get( URLS[SPECIFIC_ABILITY], function (Silex\Application $app, $id) use ( $app ) {
-	$API_URL = API_ROOT . "ability/" . $id;
-	$abilityData = json_decode(getJson($API_URL), true);
-	if (!isset($abilityData)) {
-        $app->abort(404, "Ability $id does not exist.");
+	
+	$sql = "SELECT a.*, 
+       ap.effect,
+	   ap.short_effect,
+       t.id AS 'type_id', 
+	   p.id AS 'pokemon_id',
+	   p.identifier AS 'pokemon_identifier',
+       t.identifier AS 'type_identifier',
+	   pt.slot AS 'type_slot',
+       pokea.id AS 'pokemon_ability_id',
+       pokea.identifier AS 'pokemon_ability_identifier',
+       pokepa.slot AS 'ability_slot', 
+       pokepa.is_hidden 
+FROM   abilities a 
+       JOIN ability_prose ap 
+         ON ( a.id = ap.ability_id ) 
+       JOIN pokemon_abilities pa 
+         ON ( a.id = pa.ability_id ) 
+       JOIN pokemon p 
+         ON ( p.id = pa.pokemon_id ) 
+       JOIN pokemon_types pt 
+         ON ( p.id = pt.pokemon_id ) 
+       JOIN types t 
+         ON ( t.id = pt.type_id ) 
+       JOIN pokemon_abilities pokepa 
+         ON ( pokepa.pokemon_id = p.id ) 
+       JOIN abilities pokea 
+         ON ( pokea.id = pokepa.ability_id ) 
+WHERE  a.id = :id
+       AND ap.local_language_id = 9; ";
+	
+	$stmt = $app['db']->prepare($sql);	
+	$stmt->bindValue('id', $id, PDO::PARAM_INT);
+	$stmt->execute();
+	$results = $stmt->fetchAll();
+	
+	$pokemonData = array();
+	$pokemon = array();
+	foreach($results as $row){
+		
+		$pokeID = $row['pokemon_id'];
+		$pokeIdentifier = $row['pokemon_identifier'];
+		if(!isset($pokemon[$pokeID])){
+			$pokemon[$pokeID] = array();
+			$pokemon[$pokeID]['id'] = $pokeID;
+			$pokemon[$pokeID]['identifier'] = $pokeIdentifier;
+		}
+		
+		if(!isset($pokemonData[$pokeID])){
+			$pokemonData[$pokeID] = array();
+		}
+		array_push($pokemonData[$pokeID], $row);
 	}
-	$abilityData = getAbilityPokemonWithID($abilityData);	
+	foreach($pokemonData as &$pokeRows){
+		foreach($pokeRows as &$pokeRow){
+			
+			$pokeID = $pokeRow['pokemon_id'];
+			$currPoke = &$pokemon[$pokeID];
+			
+			$abilityID = $pokeRow['pokemon_ability_id'];
+			$abilityIdentifier = $pokeRow['pokemon_ability_identifier'];
+			$abilitySlot = $pokeRow['ability_slot'];
+			$abilityIsHidden = $pokeRow['is_hidden'];
+			$currAbility = $currPoke['abilities'][$abilityID];
+			
+			$typeID = $pokeRow['type_id'];
+			$typeIdentifier = $pokeRow['type_identifier'];
+			$typeSlot = $pokeRow['type_slot'];
+			$currType = $currPoke['types'][$typeID];
+			
+			if(!isset($currPoke['types'])){
+				$currPoke['types'] = array();
+			}
+			if(!isset($currPoke['abilities'])){
+				$currPoke['abilities'] = array();
+			}
+			$currType['id'] = $typeID;
+			$currType['identifier'] = $typeIdentifier;
+			$currType['slot'] = $typeSlot;
+			
+			$currAbility['id'] = $abilityID;
+			$currAbility['slot'] = $abilitySlot;
+			$currAbility['identifier'] = $abilityIdentifier;
+			$currAbility['is_hidden'] = $abilityIsHidden;
+			
+			$currPoke['types'][$typeSlot] = $currType;
+			$currPoke['abilities'][$abilitySlot] = $currAbility;
+		}
+	}
+	
+	$first = $results[0];
+	$abilityData = array(
+		'id' => $first['id'],
+		'identifier' => $first['identifier'],
+		'generation_id' => $first['generation_id'],
+		'is_main_series' => $first['is_main_series'],
+		'short_effect' => $first['short_effect'],
+		'effect' => $first['effect'],
+		'pokemon' => $pokemon
+	);
+	//echo "<pre>"; print_r($abilityData); echo "</pre>";
+	
+	if(!isset($abilityData)){
+		$app->abort(404, "Ability $id does not exist.");
+	}
 	return $app[ 'twig' ]->render( SPECIFIC_ABILITY . EXT, $abilityData); } 
 )->bind( SPECIFIC_ABILITY );
 
