@@ -82,6 +82,10 @@ nav{
 ******ALL POKEMON PAGE****************
 **************************************
 */
+
+.filter-button.active{
+
+}
 #ability-details{
 	margin-top: 25px;
 }

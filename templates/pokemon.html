@@ -4,10 +4,10 @@
   <div class="row">
     <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
       <div class="image-cropper">
-        <img class="pokemon-info-img" src="{{sprites.front_default}}" alt="Card image cap" />
+        <img class="pokemon-info-img" src="/images/pokemon/main-sprites/black-white/{{id}}" alt="Card image cap" />
       </div>
       <div class="text-center">
-        <h1>{{ name | title}}</h1>
+        <h1>{{ identifier | title}}</h1>
         <h3>#{{order}}</h3>
       </div>
     </div>
@@ -21,10 +21,10 @@
               {% set typeLabel = "Type" %} {% if types|length > 1 %} {% set typeLabel = "Types" %} {% endif %}
               <th scope="row">{{typeLabel}}:</th>
               <td>
-                {% for type_item in types %}
-                <a href="{{type_item.type.url}}" />
-                <span class="type-display type-{{type_item.type.name}}">{{type_item.type.name | upper}}</span>
-                </a>
+                {% for type in types %}
+                <a href="/types/{{type.id}}">
+                <span class="type-display type-{{type.identifier}}">{{type.identifier | upper}}</span>
+              </a>
                 {% endfor %}
               </td>
             </tr>
@@ -33,10 +33,10 @@
               <th scope="row">{{abilityLabel}}:</th>
               <td>
                 <ul class="list-group">
-                  {% for ability_item in abilities %}
+                  {% for ability in abilities %}
                   <li class="list-group-item justify-content-between">
-                    <a href="/abilities/{{ability_item.ability.id}}">{{ability_item.ability.name | title}}</a>
-                    {% if ability_item.is_hidden %}
+                    <a href="/abilities/{{ability.id}}">{{ability.identifier | title}}</a>
+                    {% if ability.is_hidden %}
                     <span class="badge badge-default badge-pill">Hidden</span>
                     {% endif %}
                   </li>
@@ -69,86 +69,23 @@
       <div class="row justify-content-center">
         {% set names = {"hp":"HP", "attack":"Atk", "defense":"Def", "special-attack":"Sp. Atk", "special-defense":"Sp. Def", "speed":"Speed"}
         %} {% set colors = {"hp":"#ff0000", "attack":"#f08030", "defense":"#f8d030", "special-attack":"#6890f0", "special-defense":"#78c850",
-        "speed":"#f85888"} %} {% for stat_item in stats|sort %}
+        "speed":"#f85888"} %} {% for stat in stats|sort %}
 
         <div class="col-xs-4 col-md-3 col-lg-2">
           <div class="card text-center stat-card">
             <div class="card-block">
-              <h4 class="card-title" style="color:{{attribute(colors, stat_item.stat.name)}};">{{attribute(names, stat_item.stat.name)}}</h4>
+              <h4 class="card-title" style="color:{{attribute(colors, stat.identifier)}};">{{attribute(names, stat.identifier)}}</h4>
             </div>
-            <div class="card-img-bottom progress-circle" id="progress-{{stat_item.stat.name}}" name="progress-{{stat_item.stat.name}}"
-              data-label="{{stat_item.base_stat}}" data-value="{{stat_item.base_stat}}" data-color="{{attribute(colors, stat_item.stat.name)}}"></div>
+            <div class="card-img-bottom progress-circle" id="progress-{{stat.identifier}}" name="progress-{{stat.identifier}}"
+              data-label="{{stat.base_stat}}" data-value="{{stat.base_stat}}" data-color="{{attribute(colors, stat.identifier)}}"></div>
           </div>
         </div>
         {% endfor %}
       </div>
     </div>
   </div>
-  <div class="row justify-content-center">
-    
-        {% set machine_moves = [] %}
-        {% set lvl_up_moves = [] %}
-        {% set egg_moves = [] %}   
-        {% set tutor_moves = [] %}   
 
-        {% for move_entry in moves %}
-          {% if move_entry.version_group_details[0].move_learn_method.name == "level-up" %}
-           {% set lvl_up_moves = lvl_up_moves|merge([move_entry]) %}
-          {% elseif move_entry.version_group_details[0].move_learn_method.name == "machine" %}
-            {% set machine_moves = machine_moves|merge([move_entry]) %}
-          {% elseif move_entry.version_group_details[0].move_learn_method.name == "tutor" %}    
-            {% set tutor_moves = tutor_moves|merge([move_entry]) %}           
-          {% elseif move_entry.version_group_details[0].move_learn_method.name == "egg" %}
-            {% set egg_moves = egg_moves|merge([move_entry]) %}   
-          {% endif%}
-        {% endfor %}
 
-       {% set move_categories = [ (lvl_up_moves), (machine_moves), (tutor_moves), (egg_moves)] %}
-        {% for move_entry in lvl_up_moves %}
-        
-        {% endfor %}
-        {% for move_entry in egg_moves %}
-
-        {% endfor %}
-        {% for move_entry in tutor_moves %}
-        
-        {% endfor %}
-<div class="row justify-content-center">
-{% for category in (move_categories) %}
-  {% if category[0] is defined %}
-  {% set learn_method = category[0].version_group_details[0].move_learn_method.name %}
-  <div class="col-xs-10">
-    <table class="table table-striped table-fit table-hover table-moves-{{learn_method}}">
-        <thead>
-            <h3>Moves Learned via {{learn_method | title}}</h3>
-          <tr>
-            <th>Lvl.</th>
-            <th>Move</th>
-            <th>Type</th>
-            <th>Cat.</th>
-            <th>Power</th>
-            <th>Acc.</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for move_entry in category %}
-        <tr>
-            <td>{{move_entry.version_group_details[0].level_learned_at}}</td>
-            <td>
-              <a href="#">{{move_entry.move.name | title}}</a>
-            </td>
-            <td>fire</td>
-            <td>Special</td>
-            <td>90</td>
-            <td>90</td>
-          </tr>
-        {% endfor %}
-    </tbody>
-    </table>
-  </div>
-  {% endif %}
-{% endfor %}
-</div>
   </div>
 </div>
 <script src="/js/progressbar.min.js"></script>

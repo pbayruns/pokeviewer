@@ -16,13 +16,14 @@ const SPECIFIC_ABILITY = 'ability';
 const ALL_MOVES = 'movelist';
 const SPECIFIC_MOVE = 'move';
 const EXT = '.HTML';
+const URLEND = '/';
 const URLS = array(
-	SPECIFIC_POKEMON => '/pokemon/{id}',
-	ALL_POKEMON => '/pokemon',
-	SPECIFIC_ABILITY => '/abilities/{id}',
-	ALL_ABILITIES => '/abilities',
-	SPECIFIC_MOVE => '/move/{id}',
-	ALL_MOVES => '/moves'
+	SPECIFIC_POKEMON => '/pokemon/{id}'. URLEND,
+	ALL_POKEMON => '/pokemon'. URLEND,
+	SPECIFIC_ABILITY => '/abilities/{id}'. URLEND,
+	ALL_ABILITIES => '/abilities'. URLEND,
+	SPECIFIC_MOVE => '/move/{id}'. URLEND,
+	ALL_MOVES => '/moves'. URLEND
 );
 const URL_ALL_LIMIT = 10000000;
 //Request::setTrustedProxies(array('127.0.0.1'));
@@ -107,48 +108,185 @@ function stringsToArrays(&$data, $target_key){
 		foreach($data_entry as $key => &$value){
 			if($key == $target_key){
 				$value = explode(',', $value);
+				foreach($value as &$value_entry){
+					$array = explode('_', $value_entry);
+					$value_entry = array(
+						'id' => $array[0],
+						'value' => $array[1]
+					);
+				}
 			}
 		}
 	}
 	return $data;
 }
 
-function pokemonTypesToArray($data){
-
+function idValStringsToArray($data, $target_key){
+		foreach($data as $key => &$value){
+			if($key == $target_key){
+				$value = explode(',', $value);
+				foreach($value as &$value_entry){
+					$array = explode('_', $value_entry);
+					$value_entry = array(
+						'id' => $array[0],
+						'value' => $array[1]
+					);
+				}
+			}
+		}
+	return $data;
 }
-$app->get('/pokemontest', function () use ($app) {
-	$sql = "SELECT p.*, GROUP_CONCAT(t.identifier, ',') AS types FROM pokemon p
-			JOIN pokemon_types pt ON (p.id = pt.pokemon_id)
-			JOIN types t ON (pt.type_id = t.id)
-			GROUP BY p.id";
-	$pokemon = $app['db']->fetchAll($sql);
-	$pokemon = stringsToArrays($pokemon, 'types');
-    return $app[ 'twig' ]->render( 'pokemontest.html', array('pokemon' => $pokemon)); } 
-)->bind( 'pokemontest' );
 
+function formatJSON($json_string){
+	$badchar=array(
+		// control characters
+		chr(0), chr(1), chr(2), chr(3), chr(4), chr(5), chr(6), chr(7), chr(8), chr(9), chr(10),
+		chr(11), chr(12), chr(13), chr(14), chr(15), chr(16), chr(17), chr(18), chr(19), chr(20),
+		chr(21), chr(22), chr(23), chr(24), chr(25), chr(26), chr(27), chr(28), chr(29), chr(30),
+		chr(31),
+		// non-printing characters
+		chr(127)
+	);
+	//replace the unwanted chars
+	$json_string = str_replace($badchar, '', $json_string);
+	$json_string = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json_string);
+	$json_string = str_replace("'", '"', $json_string);
+	$json_string =str_replace('&quot;', '"', $json_string);
+	return $json_string;
+}
 //specific pokemon endpoint
-$app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( $app ) {
-	$API_URL = API_ROOT . "pokemon/" . $id;
-	$pokemon = json_decode(getJson($API_URL), true);
-	if (!isset($pokemon)) {
-        $app->abort(404, "Pokemon $id does not exist.");
-    }
-	$pokemon = getPokemonWithCacheURLS($pokemon);
-	//$pokemon['']
-	foreach($pokemon['abilities'] as &$ability){
-		$ability['ability']['id'] = getEndingID($ability['ability']['url']);
+function getJSONString($fields){
+	$string = "'{' || ";
+	$end = " || ',' || ";
+	foreach($fields as $key => $value){
+		$string .= "' ''".$key."'': '|| ";
+		if($value['is_string']){
+			$string .= " '''' || " .$value['value']. " || '''' ";
+		}else{
+			$string .= $value['value'];
+		}
+		$string .= " || ',' || ";
 	}
+	$string = substr($string, 0, -1*strlen($end)) . " || '}'";
+	return $string;
+}
+
+function getQueryJSONArray($name, $fields){
+	$fields = getJSONString($fields);
+	$query = "'{ ''".$name."'': [' || GROUP_CONCAT(DISTINCT ".$fields.") || '] }' AS " .$name;
+	return $query;
+}
+
+function getUpdatedJSON($array, $accessor){
+	$string = formatJSON($array[$accessor]);
+	$decoded = json_decode($string, true);
+	return $decoded[$accessor];
+}
+
+$app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( $app ) {
+
+	$abilityFields = array(
+		'id' => array(
+			'is_string' => false,
+			'value' => 'a.id' 
+		),
+		'identifier' => array(
+			'is_string' => true,
+			'value' => 'a.identifier' 
+		),
+		'slot' => array(
+			'is_string' => false,
+			'value' => 'pa.slot' 
+		),
+		'is_hidden' => array(
+			'is_string' => false,
+			'value' => 'pa.is_hidden' 
+		)
+	);
+
+	$typeFields = array(
+		'id' => array(
+			'is_string' => false,
+			'value' => 't.id' 
+		),
+		'identifier' => array(
+			'is_string' => true,
+			'value' => 't.identifier' 
+		)
+	);
+
+	$statFields = array(
+		'id' => array(
+			'is_string' => false,
+			'value' => 's.id' 
+		),
+		'identifier' => array(
+			'is_string' => true,
+			'value' => 's.identifier' 
+		),
+		'base_stat' => array(
+			'is_string' => false,
+			'value' => 'ps.base_stat' 
+		),
+		'effort' => array(
+			'is_string' => false,
+			'value' => 'ps.effort' 
+		)
+	);
+
+	$STATS = 'stats';
+	$ABILITIES = 'abilities';
+	$TYPES = 'types';
+	$abilitySQL = getQueryJSONArray($ABILITIES, $abilityFields);
+	$typesSQL = getQueryJSONArray($TYPES, $typeFields);
+	$statSQL = getQueryJSONArray($STATS, $statFields);
+	
+	$sql = "SELECT p.*, "
+		.$typesSQL.	 	" , "
+		.$abilitySQL.	" , "
+		.$statSQL.
+	" FROM pokemon p
+	JOIN pokemon_types pt ON (p.id = pt.pokemon_id)
+	JOIN types t ON (pt.type_id = t.id)
+	JOIN pokemon_abilities pa ON (pa.pokemon_id = p.id)
+	JOIN abilities a ON (pa.ability_id = a.id) 
+	JOIN pokemon_stats ps ON (ps.pokemon_id = p.id)
+	JOIN stats s ON (s.id = ps.stat_id)
+	WHERE p.id = :id
+	GROUP BY p.id";
+	$stmt = $app['db']->prepare($sql);	
+	$stmt->bindValue('id', $id, PDO::PARAM_INT);
+	$stmt->execute();
+	$pokemon = $stmt->fetchAll();
+	if(isset($pokemon) && count($pokemon) == 1){
+		$pokemon = $pokemon[0];
+	}else{
+		$app->abort(404, "Pokemon $id does not exist.");
+	}
+	//$pokemon[$ABILITIES] = getUpdatedJSON($pokemon, $ABILITIES);
+	$string = formatJSON($pokemon[$ABILITIES]);
+	$decoded = json_decode($string, true);
+	$pokemon[$ABILITIES] = getUpdatedJSON($pokemon, $ABILITIES);//$decoded[$ABILITIES];	
+	$pokemon[$TYPES] = getUpdatedJSON($pokemon, $TYPES);
+	$pokemon[$STATS] = getUpdatedJSON($pokemon, $STATS);
+
 	return $app[ 'twig' ]->render( SPECIFIC_POKEMON . EXT, $pokemon); } 
+
 )->bind( SPECIFIC_POKEMON );
 
 //list of all pokemon
 $app->get( URLS[ALL_POKEMON], function () use ( $app ) {
-	$API_URL = API_ROOT . "pokemon/?limit=50&offset=0"; //. URL_ALL_LIMIT;
-	$pokemonList = json_decode(getJson($API_URL), true);
-	$pokemonList['results'] = getIDPokemonList($pokemonList['results']);
-	$pokemonList = getPokemonDetailList($pokemonList);
-	$pokemonList = addTypesToJSON($pokemonList);
-	return $app[ 'twig' ]->render( ALL_POKEMON . EXT, $pokemonList );
+	$sql = "SELECT p.*, GROUP_CONCAT(t.identifier, ',') AS types FROM pokemon p
+	JOIN pokemon_types pt ON (p.id = pt.pokemon_id)
+	JOIN types t ON (pt.type_id = t.id)
+	GROUP BY p.id";
+	$pokemon = $app['db']->fetchAll($sql);
+	$pokemon = stringsToArrays($pokemon, 'types');
+
+	$sql = "SELECT identifier FROM types";
+	$types = $app['db']->fetchAll($sql);
+	
+	return $app[ 'twig' ]->render( ALL_POKEMON . EXT, array('pokemon' => $pokemon, 'types' => $types) );
 } )->bind( ALL_POKEMON );
 
 //specific ability endpoint
