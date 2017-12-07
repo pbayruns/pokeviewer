@@ -234,17 +234,61 @@ $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( 
 		)
 	);
 
+	$moveFields = array(
+		'id' => array(
+			'is_string' => false,
+			'value' => 'm.id' 
+		),
+		'identifier' => array(
+			'is_string' => true,
+			'value' => 'm.identifier' 
+		),
+		'type' => array(
+			'is_string' => true,
+			'value' => 'mtypes.identifier' 
+		),
+		'power' => array(
+			'is_string' => false,
+			'value' => 'm.power' 
+		),
+		'accuracy' => array(
+			'is_string' => false,
+			'value' => 'm.accuracy' 
+		),
+		'pp' => array(
+			'is_string' => false,
+			'value' => 'm.pp' 
+		),
+		'priority' => array(
+			'is_string' => false,
+			'value' => 'm.priority' 
+		),
+		'target' => array(
+			'is_string' => true,
+			'value' => 'mt.identifier' 
+		),'level' => array(
+			'is_string' => false,
+			'value' => 'pm.level' 
+		),'learn_method' => array(
+			'is_string' => true,
+			'value' => 'pmm.identifier'
+		)
+	);
+
 	$STATS = 'stats';
 	$ABILITIES = 'abilities';
 	$TYPES = 'types';
+	$MOVES = 'moves';
 	$abilitySQL = getQueryJSONArray($ABILITIES, $abilityFields);
 	$typesSQL = getQueryJSONArray($TYPES, $typeFields);
 	$statSQL = getQueryJSONArray($STATS, $statFields);
+	$moveSQL = getQueryJSONArray($MOVES, $moveFields);
 	
 	$sql = "SELECT p.*, "
 		.$typesSQL.	 	" , "
 		.$abilitySQL.	" , "
-		.$statSQL.
+		.$statSQL.		" , "
+		.$moveSQL.
 	" FROM pokemon p
 	JOIN pokemon_types pt ON (p.id = pt.pokemon_id)
 	JOIN types t ON (pt.type_id = t.id)
@@ -252,6 +296,11 @@ $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( 
 	JOIN abilities a ON (pa.ability_id = a.id) 
 	JOIN pokemon_stats ps ON (ps.pokemon_id = p.id)
 	JOIN stats s ON (s.id = ps.stat_id)
+	JOIN pokemon_moves pm ON (p.id = pm.pokemon_id)
+	JOIN moves m ON (m.id = pm.move_id)
+	JOIN pokemon_move_methods pmm ON (pmm.id = pm.pokemon_move_method_id)
+	JOIN move_targets mt ON (m.target_id = mt.id)
+	JOIN types mtypes ON (mtypes.id = m.type_id)
 	WHERE p.id = :id
 	GROUP BY p.id";
 	$stmt = $app['db']->prepare($sql);	
@@ -269,6 +318,7 @@ $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( 
 	$pokemon[$ABILITIES] = getUpdatedJSON($pokemon, $ABILITIES);//$decoded[$ABILITIES];	
 	$pokemon[$TYPES] = getUpdatedJSON($pokemon, $TYPES);
 	$pokemon[$STATS] = getUpdatedJSON($pokemon, $STATS);
+	$pokemon[$MOVES] = getUpdatedJSON($pokemon, $MOVES);
 
 	return $app[ 'twig' ]->render( SPECIFIC_POKEMON . EXT, $pokemon); } 
 
@@ -276,13 +326,29 @@ $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( 
 
 //list of all pokemon
 $app->get( URLS[ALL_POKEMON], function () use ( $app ) {
-	$sql = "SELECT p.*, GROUP_CONCAT(t.identifier, ',') AS types FROM pokemon p
+	
+	$typeFields = array(
+		'id' => array(
+			'is_string' => false,
+			'value' => 't.id' 
+		),
+		'identifier' => array(
+			'is_string' => true,
+			'value' => 't.identifier' 
+		)
+	);
+	$typesSQL = getQueryJSONArray('types', $typeFields);
+	
+	$sql = "SELECT p.*, ".$typesSQL." FROM pokemon p
 	JOIN pokemon_types pt ON (p.id = pt.pokemon_id)
 	JOIN types t ON (pt.type_id = t.id)
 	GROUP BY p.id";
-	$pokemon = $app['db']->fetchAll($sql);
-	$pokemon = stringsToArrays($pokemon, 'types');
 
+	$pokemon = $app['db']->fetchAll($sql);
+	foreach($pokemon as &$poke){
+		$poke['types'] = getUpdatedJSON($poke, 'types');	
+	}
+	
 	$sql = "SELECT identifier FROM types";
 	$types = $app['db']->fetchAll($sql);
 	

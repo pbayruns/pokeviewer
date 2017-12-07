@@ -84,8 +84,40 @@
       </div>
     </div>
   </div>
+  <div class="row justify-content-center">
+      <table class="table table-striped table-fit table-hover">		
+        <thead>		
+          <tr>		
+            <th>Lvl.</th>		
+            <th>Move</th>		
+            <th>Type</th>		
+            <th>Cat.</th>		
+            <th>Power</th>		
+            <th>Acc.</th>		
+            <th>Method</th>
+          </tr>		
+        </thead>		
+        <tbody>		
+          {% for move in moves %}		
+          <tr>		
+            <td>{{move.level}}</td>		
+            <td>		
+              <a href="/moves/{{move.id}}">{{move.identifier | title}}</a>		
+            </td>		
+            <td><a href="#">
+              <span class="type-display type-{{move.type}}">{{move.type | upper}}</span>
+            </a>
+          </td>		
+          <td>Special</td>	          
+          <td>{{move.power}}</td>	            
+          <td>{{move.accuracy}}</td>	  
+          <td>{{move.learn_method | title}}</td>          
+          </tr>		
+          {% endfor %}		
+        </tbody>		
 
-
+      </table>
+    </div>
   </div>
 </div>
 <script src="/js/progressbar.min.js"></script>
