@@ -1,0 +1,24 @@
+{% extends "layout.html" %} {% block content %} {% include "navbar.html" %}
+<div id="wrapper">
+
+    <div class="row justify-content-center">
+        <h1>All Pokemon</h1>
+    </div>
+    <div class="row justify-content-center">
+    {% for poke in pokemon %}
+    <div onclick="window.location='./pokemon/{{poke.id}}';" class="pokemon-card filter all">
+        <div class="card text-center">
+            <img href="" class="card-img-top pokemon-img" src="/pokemon/main-sprites/black-white/{{poke.id}}" alt="{{poke.identifier|title}}">
+            <div class="card-block">
+                <h6 class="card-title">{{poke.identifier|title}} #{{poke.order}}</h6>
+                {% for type in poke.types %}
+					<span class="type-display type-{{type}}">{{type | upper}}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+<code></code>
+</div> {% endblock %}

@@ -1,19 +1,70 @@
-{% extends "layout.html" %}
-{% block content %}
-{% include "navbar.html" %}
+{% extends "layout.html" %} {% block content %} {% include "navbar.html" %}
 <div id="wrapper">
-    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 offset-sm-1 offset-md-2 offset-lg-3">
-        <div class="row"> 
-           {% for poke in results %}
-				<div onclick="window.location='./pokemon/id/{{poke.id}}';" class="col-xs-5 col-md-4 col-xl-3 pokemon-card">
-					<div class="card text-center"> <img href="" class="card-img-top pokemon-img" src="/afdasf" alt="{{poke.name|title}}">
-						<div class="card-block">
-							<h6 class="card-title">{{poke.name|title}} #{{poke.id}}</h6>
-						</div>
-					</div>
+	<div class="row justify-content-center">
+		<h1>All Pokemon</h1>
+	</div>
+	<div class="row justify-content-center">
+			<button class="btn btn-default filter-button" data-filter="all">Clear Filters</button>
+			<br>			
+		{% for type in types.results %}
+		<button class="btn btn-default filter-button type-display type-{{type.name}}" data-filter="{{type.name}}">{{type.name | upper}}</button>
+		{% endfor %}
+	</div>
+	<div class="row justify-content-center">
+		{% for poke in results %}
+		
+		{% set poketypes = {} %}
+			{% for type_item in poke.types %}
+				{% set poketypes = poketypes|merge({(type_item.slot): (type_item)}) %}
+			{% endfor %}
+			{% set firsttype = (poketypes.0.type.name) %}
+			{% set secondtype = "" %}
+			{% if (poketypes.1.type.name) is defined %}
+				{% set secondtype = (poketypes.1.type.name) %}
+			{% endif %}
+		<div onclick="window.location='./pokemon/{{poke.id}}';" class="pokemon-card filter all {{firsttype}} {{secondtype}}">
+			<div class="card text-center">
+				<img href="" class="card-img-top pokemon-img" src="{{poke.sprites.front_default}}" alt="{{poke.name|title}}">
+				<div class="card-block">
+					<h6 class="card-title">{{poke.name|title}} #{{poke.id}}</h6>
+					{% if poketypes.1 is defined %}
+					<a href="{{poketypes.1.type.url}}" />
+					<span class="type-display type-{{poketypes.1.type.name}}">{{poketypes.1.type.name | upper}}</span>
+					</a>
+					{% endif %}
+					<a href="{{poketypes.0.type.url}}" />
+					<span class="type-display type-{{poketypes.0.type.name}}">{{poketypes.0.type.name | upper}}</span>
+					</a>
 				</div>
-            {% endfor %} 
-        </div>
-    </div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
 </div>
+<script>
+	$(document).ready(function () {
+
+		$(".filter-button").click(function () {
+			var value = $(this).attr('data-filter');
+
+			if (value == "all") {
+				//$('.filter').removeClass('hidden');
+				$('.filter').show('1000');
+			} else {
+				//            $('.filter[filter-item="'+value+'"]').removeClass('hidden');
+				//            $(".filter").not('.filter[filter-item="'+value+'"]').addClass('hidden');
+				$(".filter").not('.' + value).hide('3000');
+				$('.filter').filter('.' + value).show('3000');
+
+			}
+		});
+
+		if ($(".filter-button").removeClass("active")) {
+			$(this).removeClass("active");
+		}
+		$(this).addClass("active");
+
+	});
+</script>
 {% endblock %}

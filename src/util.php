@@ -3,13 +3,12 @@
 function getJson($url) {
     // cache files are created like cache/abcdef123456...
     $cacheFile = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . md5($url);
-	
     if (file_exists($cacheFile)) {
         $fh = fopen($cacheFile, 'r');
         $cacheTime = trim(fgets($fh));
 
         // if data was cached recently, return cached data
-        if ($cacheTime > strtotime('-7 days')) {
+        if ($cacheTime > strtotime('-5 years')) {
             return fread($fh, filesize($cacheFile));
         }
 
@@ -18,7 +17,7 @@ function getJson($url) {
         unlink($cacheFile);
     }
 
-    $client = new GuzzleHttp\Client();
+    $client = new GuzzleHttp\Client(['verify' => false ]);
 	$response =  $client->request('GET', $url);
 	$json = $response->getBody();
 	
@@ -32,6 +31,9 @@ function getJson($url) {
 
 function getImage($url){
 
+    if($url == null){
+        return "";
+    }
 // Time to cache the files (here: 1 week)
 if (!defined('time_to_cache')) define('time_to_cache', 604800);
 

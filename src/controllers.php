@@ -21,7 +21,7 @@ const URLS = array(
 	ALL_POKEMON => '/pokemon',
 	SPECIFIC_ABILITY => '/abilities/{id}',
 	ALL_ABILITIES => '/abilities',
-	SPECIFIC_MOVE => '/moves/{id}',
+	SPECIFIC_MOVE => '/move/{id}',
 	ALL_MOVES => '/moves'
 );
 const URL_ALL_LIMIT = 10000000;
@@ -41,7 +41,7 @@ function getIDPokemonList(array $pokemonList){
 	return $pokemonList;
 }
 
-function addPokemonID(array $pokemon){
+function addPokemonID($pokemon){
 	$pokemon['id'] = getEndingID($pokemon['url']);
 	return $pokemon;
 }
@@ -71,6 +71,61 @@ function getEndingID($url){
 	return end($url_array);
 }
 
+function getPokemonDetailList($pokemonList){
+	foreach($pokemonList['results'] as &$pokemon){
+		
+		$json = getJson($pokemon['url']);
+		//echo $json;
+			$pokemon = json_decode($json, true);			
+		
+		//$pokemon = (array) array_merge((array) $pokemon, (array) json_decode(getJson($pokemon['url']), true));		
+		
+		$pokemon['sprites']['front_default'] = getImage($pokemon['sprites']['front_default']);
+	}
+	return $pokemonList;
+}
+
+function getDetailList($apiList){
+	foreach($apiList['results'] as &$result){
+		$result = json_decode(getJson($result['url']), true);
+		//$result['sprites']['front_default'] = getImage($result['sprites']['front_default']);
+	}
+	return $apiList;
+}
+
+function addTypesToJSON(&$json){
+	$json['types'] = json_decode(getJson(API_ROOT . 'type/'), true);
+	return $json;
+}
+
+function getArrayFromCSV($csv){
+	return explode(',', $csv);
+}
+
+function stringsToArrays(&$data, $target_key){
+	foreach($data as &$data_entry){
+		foreach($data_entry as $key => &$value){
+			if($key == $target_key){
+				$value = explode(',', $value);
+			}
+		}
+	}
+	return $data;
+}
+
+function pokemonTypesToArray($data){
+
+}
+$app->get('/pokemontest', function () use ($app) {
+	$sql = "SELECT p.*, GROUP_CONCAT(t.identifier, ',') AS types FROM pokemon p
+			JOIN pokemon_types pt ON (p.id = pt.pokemon_id)
+			JOIN types t ON (pt.type_id = t.id)
+			GROUP BY p.id";
+	$pokemon = $app['db']->fetchAll($sql);
+	$pokemon = stringsToArrays($pokemon, 'types');
+    return $app[ 'twig' ]->render( 'pokemontest.html', array('pokemon' => $pokemon)); } 
+)->bind( 'pokemontest' );
+
 //specific pokemon endpoint
 $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( $app ) {
 	$API_URL = API_ROOT . "pokemon/" . $id;
@@ -79,14 +134,20 @@ $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( 
         $app->abort(404, "Pokemon $id does not exist.");
     }
 	$pokemon = getPokemonWithCacheURLS($pokemon);
+	//$pokemon['']
+	foreach($pokemon['abilities'] as &$ability){
+		$ability['ability']['id'] = getEndingID($ability['ability']['url']);
+	}
 	return $app[ 'twig' ]->render( SPECIFIC_POKEMON . EXT, $pokemon); } 
 )->bind( SPECIFIC_POKEMON );
 
 //list of all pokemon
 $app->get( URLS[ALL_POKEMON], function () use ( $app ) {
-	$API_URL = API_ROOT . "pokemon/?limit=" . URL_ALL_LIMIT;
+	$API_URL = API_ROOT . "pokemon/?limit=50&offset=0"; //. URL_ALL_LIMIT;
 	$pokemonList = json_decode(getJson($API_URL), true);
 	$pokemonList['results'] = getIDPokemonList($pokemonList['results']);
+	$pokemonList = getPokemonDetailList($pokemonList);
+	$pokemonList = addTypesToJSON($pokemonList);
 	return $app[ 'twig' ]->render( ALL_POKEMON . EXT, $pokemonList );
 } )->bind( ALL_POKEMON );
 

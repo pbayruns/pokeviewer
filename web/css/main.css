@@ -87,6 +87,9 @@ nav{
 }
 .pokemon-card{
 	margin-top: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+	width: 150px;
 }
 
 .pokemon-card > .card {
@@ -98,8 +101,7 @@ nav{
 
 .pokemon-card > .card:hover {
 	background: rgba(255,255,255,0.50) !important;
-	border: 5px solid #F5E3E0 !important;
-	border: solid 5px #FFF;
+	border: 5px solid #20FC8F !important;
 	cursor: pointer;
 }
 
@@ -191,7 +193,23 @@ nav{
 	width: auto !important;
 }
 
+.table-moves-level-up{
+	background: #FFCFAC !important;
+}
+
+.table-moves-tutor{
+	background: #FB6107 !important;
+}
+
+.table-moves-egg{
+
+}
+
+.table-moves-machine{
+	background: #F3DE2C !important;
+}
 .stat-card{
+	max-width: 100px;
 	margin-left: 0 !important;
 	margin-right: 0 !important;
 	font-weight: bold !important;
@@ -232,6 +250,7 @@ nav{
 */
 .type-display{
 	font-family: "Fira Sans","Trebuchet MS","Tahoma","Ubuntu","Helvetica","Arial",sans-serif;
+	cursor: pointer;
 	font-size: 10px;
 	border-radius: 3px;
 	color: #FFF;
