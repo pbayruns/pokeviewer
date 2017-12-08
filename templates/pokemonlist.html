@@ -1,14 +1,21 @@
 {% extends "layout.html" %} {% block content %} {% include "navbar.html" %}
-<div id="wrapper">
+<div id="wrapper" class="pokemon-style-display">
 	<div class="row justify-content-center">
-		<h1 id="pokemon-list-title">All Pokemon</h1>
+		<h1 id="pokemon-list-title"><span id="list-type">All</span> Pokemon</h1>
 	</div>
 	<div class="row justify-content-center">
-			<button class="btn btn-default filter-button" data-filter="all">Clear Filters</button>
-			<br>			
+		<h3>Click a type to filter by</h3>
+	</div>	
+	<div class="row justify-content-center">
+				<button class="btn btn-primary btn-lg filter-button" data-filter="all">Clear Filters</button>
+				<br>
+		</div>	
+	<div class="row justify-content-center">	
+		<div class="col-xs-12 col-sm-10 col-lg-8">			
 		{% for type in types %}
 		<button class="btn btn-default filter-button type-display type-{{type.identifier}}" data-filter="{{type.identifier}}">{{type.identifier | upper}}</button>
 		{% endfor %}
+	</div>
 	</div>
 	<div class="row justify-content-center">
 		{% for poke in pokemon %}
@@ -19,14 +26,14 @@
 		<div onclick="window.location='{{poke.id}}';" class="pokemon-card type-{{poke.types[0].identifier}}  filter all {{typestring}}">
 			<div class="inner-pokemon-card text-center">
 					
-				<img href="" class="card-img-top pokemon-img" src="/images/pokemon/main-sprites/black-white/{{poke.id}}.png" alt="{{poke.identifier|title}}">
+				<img href="" class="card-img-top pokemon-img" src="/images/sprites/pokemon/{{poke.id}}.png" alt="{{poke.identifier|title}}">
 				<div class="card-block">
-					<h6 class="card-title">{{poke.identifier|title}} #{{poke.order}}</h6>
-					{% for type in poke.types %}
-					<a href="/types/{{type.id}}">
-						<span class="type-display type-{{type.identifier}}">{{type.identifier | upper}}</span>
-					</a>
-					{% endfor %}
+						<h6 class="card-title">{{poke.identifier|title}} #{{poke.order}}</h6>						
+						{% for type in poke.types %}
+						<a href="/types/{{type.id}}">
+							<span class="type-display type-{{type.identifier}}">{{type.identifier | upper}}</span>
+						</a>
+						{% endfor %}
 				</div>
 			</div>
 		</div>
@@ -36,26 +43,27 @@
 <script>
 	$(document).ready(function () {
 		var title = $('#pokemon-list-title');
+		var activeType = $('#list-type');
 		title.css('textTransform', 'capitalize');		
-		var defaultTitle = "All Pokemon";
+		var defaultTitle = "All";
 		$(".filter-button").click(function () {
 			var value = $(this).attr('data-filter');
 
 			if (value == "all") {
 				//$('.filter').removeClass('hidden');
 				$('.filter').show();
-				title.text(defaultTitle);
+				activeType.text(defaultTitle);
 			} else {
 				//            $('.filter[filter-item="'+value+'"]').removeClass('hidden');
 				//            $(".filter").not('.filter[filter-item="'+value+'"]').addClass('hidden');
 				$(".filter").not('.' + value).hide();
 				$('.filter').filter('.' + value).show();
-				title.text('All ' + value + '-Type Pokemon')
+				activeType.text(value + '-Type')
 			}
 		});
 
 		if ($(".filter-button").removeClass("active")) {
-			$(this).removeClass("active");
+			$(this).removeClass("active");			
 		}
 		$(this).addClass("active");
 

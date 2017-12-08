@@ -401,6 +401,7 @@ WHERE  a.id = :id
 	
 	$pokemonData = array();
 	$pokemon = array();
+	$typeCount = array();
 	foreach($results as $row){
 		
 		$pokeID = $row['pokemon_id'];
@@ -426,12 +427,10 @@ WHERE  a.id = :id
 			$abilityIdentifier = $pokeRow['pokemon_ability_identifier'];
 			$abilitySlot = $pokeRow['ability_slot'];
 			$abilityIsHidden = $pokeRow['is_hidden'];
-			$currAbility = $currPoke['abilities'][$abilityID];
 			
 			$typeID = $pokeRow['type_id'];
 			$typeIdentifier = $pokeRow['type_identifier'];
 			$typeSlot = $pokeRow['type_slot'];
-			$currType = $currPoke['types'][$typeID];
 			
 			if(!isset($currPoke['types'])){
 				$currPoke['types'] = array();
@@ -439,6 +438,11 @@ WHERE  a.id = :id
 			if(!isset($currPoke['abilities'])){
 				$currPoke['abilities'] = array();
 			}
+			$currPoke['types'][$typeSlot] = array();
+			$currPoke['abilities'][$abilitySlot] = array();
+			$currType = $currPoke['types'][$typeSlot];
+			$currAbility = $currPoke['abilities'][$abilitySlot];
+			
 			$currType['id'] = $typeID;
 			$currType['identifier'] = $typeIdentifier;
 			$currType['slot'] = $typeSlot;
@@ -450,11 +454,23 @@ WHERE  a.id = :id
 			
 			$currPoke['types'][$typeSlot] = $currType;
 			$currPoke['abilities'][$abilitySlot] = $currAbility;
+			if(!isset($typeCount[$typeIdentifier])){
+				$typeCount[$typeIdentifier] = 0;
+			}
+			$typeCount[$typeIdentifier]++;			
 		}
 	}
-	
+	$max = -1;
+	$maxType = "normal";
+	foreach($typeCount as $type => $count){
+		if($count > $max){
+			$max = $count;
+			$maxType = $type;
+		}
+	}
 	$first = $results[0];
 	$abilityData = array(
+		'common_type' => $maxType,
 		'id' => $first['id'],
 		'identifier' => $first['identifier'],
 		'generation_id' => $first['generation_id'],
@@ -471,6 +487,16 @@ WHERE  a.id = :id
 	return $app[ 'twig' ]->render( SPECIFIC_ABILITY . EXT, $abilityData); } 
 )->bind( SPECIFIC_ABILITY );
 
+$app->get( URLS[ALL_ABILITIES], function (Silex\Application $app) use ( $app ) {
+	
+	$sql = "SELECT a.*, g.identifier AS 'generation' FROM abilities a JOIN generations g ON (g.id = a.generation_id)";
+	$stmt = $app['db']->prepare($sql);	
+	$stmt->execute();
+	$abilities = $stmt->fetchAll();
+
+	return $app[ 'twig' ]->render( ALL_ABILITIES . EXT, array('abilities' => $abilities)); } 
+)->bind( ALL_ABILITIES );
+
 
 $app->get( URLS[SPECIFIC_MOVE], function (Silex\Application $app, $id) use ( $app ) {
 	$API_URL = API_ROOT . "move/" . $id;
@@ -479,11 +505,22 @@ $app->get( URLS[SPECIFIC_MOVE], function (Silex\Application $app, $id) use ( $ap
 )->bind( SPECIFIC_MOVE );
 
 $app->get( URLS[ALL_MOVES], function () use ( $app ) {
-	$API_URL = "http://pokeapi.co/api/v2/move/?limit=" . URL_ALL_LIMIT;
-	$moveData = json_decode(getJson($API_URL), true);
-	$moveData = addIDsToResultList($moveData);
-	return $app[ 'twig' ]->render( ALL_MOVES.EXT, $moveData); } 
+
+	$sql = "SELECT m.*, t.identifier AS 'type', mdc.identifier AS 'damage_type'
+			FROM moves m
+			JOIN move_damage_classes mdc ON (m.damage_class_id = mdc.id)
+			JOIN types t ON (m.type_id = t.id)";
+	$stmt = $app['db']->prepare($sql);	
+	$stmt->execute();
+	$moves = $stmt->fetchAll();
+
+	return $app[ 'twig' ]->render( ALL_MOVES.EXT, array('moves' => $moves)); } 
 )->bind( ALL_MOVES );
+
+$app->get( '/', function () use ( $app ) {
+	
+		return $app[ 'twig' ]->render( 'index.html'); } 
+	)->bind( 'index' );
 
 //errors
 $app->error( function ( \Exception $e, Request $request, $code )use( $app ) {

@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "navbar.html" %}
+<div id="wrapper">
+    <div class="row justify-content-center pokemon-style-display">
+            <h1>All Abilities</h1>
+        </div>
+    <div class="row justify-content-center " >
+        <table id="move-table" class="stripe row-border">
+            <thead class="pokemon-style-display">
+                <tr>
+                    <th>Ability</th>
+                    <th>Introduced In</th>
+                    <th>Main Series?</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+            {% for ability in abilities %}
+            <tr>
+                <td><a href="/abilities/{{ability.id}}">{{ability.identifier|title}}</a></td>
+                <td>{{ability.generation | default('--')}}</td>
+                <td>{{ ability.is_main_series ? 'Yes':'No' }}</td>
+            </tr>
+
+            {% endfor %}
+                </tbody>
+        </table>
+    </div>
+    <script>
+            $(document).ready(function(){
+                $('#move-table').DataTable();
+            });
+    </script>
+</div>
+{% endblock %} 

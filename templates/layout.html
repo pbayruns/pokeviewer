@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Pokeviewer">
     <meta name="application-name" content="Pokeviewer">
     <meta name="theme-color" content="#ffffff">
-    <link href="{{ asset('css/main.css') }}" rel="stylesheet" type="text/css" />
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
         crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -20,6 +20,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
         crossorigin="anonymous"></script>
     <script src="https://use.fontawesome.com/978f7c3fc0.js"></script>
+    
+    <link type="text/css" rel="stylesheet" href="http://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
     <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-XXXXXXXX-X']);
@@ -35,6 +39,8 @@
             s.parentNode.insertBefore(ga, s);
         })();
     </script>
+    <link href="{{ asset('css/main.css') }}" rel="stylesheet" type="text/css" />
+    
 </head>
 <body>
     {% block content %}{% endblock %}

@@ -1,84 +1,83 @@
-{% extends "layout.html" %}
-{% block content %}
-{% include "navbar.html" %}
+{% extends "layout.html" %} {% block content %} {% include "navbar.html" %}
 <div id="wrapper">
-    <div class="row justify-content-center">
-        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
-            <div class="jumbotron ability-jumbotron">
-                <h1 class="display-3 text-center">{{ identifier | title}}</h1>
-                <h5 class="text-center">
-                	(<a class="ability-link" href="#">
-                		Gen {{generation_id}}
-                	</a> 
-					{% if is_main_series %}
-						(Main Series)
-					{% endif %}
-					Ability)
-                </h5>
-                
-                
-                <p class="lead">{{short_effect}}</p>
-                <hr class="my-4">
-                <button class="btn btn-md btn-transparent btn-red" type="button" data-toggle="collapse" data-target="#ability-details" aria-expanded="false" aria-controls="ability-details"> Show/Hide Details </button>
-                <div class="collapse" id="ability-details"> <strong>Full Effect:</strong> {{effect}} </div>
- </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
+            <div class="row justify-content-center">
+                <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8 col-xl-8">
+                    <div class="jumbotron ability-jumbotron pokemon-style-display type-{{common_type}}">
+                        <h1 class="display-3 text-center">{{ identifier | title}}</h1>
+                        <h5 class="text-center">
+                            {% if is_main_series %} (Main Series) {% endif %} (
+                            <a class="ability-link" href="#">Gen {{generation_id}}</a>
+                            Ability)
+                        </h5>
+                        <p class="lead">{{short_effect}}</p>
+                        <hr class="my-4">
+                        <button class="btn btn-lg pokemon-style-display btn-transparent btn-red" type="button" data-toggle="collapse" data-target="#ability-details" aria-expanded="false"
+                            aria-controls="ability-details"> Show/Hide Details </button>
+                        <div class="collapse" id="ability-details">
+                            <strong>Full Effect:</strong> {{effect}} </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="row  justify-content-center">
-        <h3>Pokemon with {{ identifier | title}}</h3>
-    </div>
-    <div class="row  justify-content-center">
-        <table class="table table-striped table-fit table-hover">
-            <thead>
-                <tr>
-                    <th>Pokemon</th>
-                    <th>Type</th>
-                    <th>Ability 1</th>
-            		<th>Ability 2</th>
-               		<th>Ability 3</th>
-                </tr>
-            </thead>
-            <tbody>
-            
-            {% for poke in pokemon %}
-            <tr valign="middle" class="center">
-                <td> <a href="/pokemon/{{poke.id}}"><img class="pokemon-img-small" src="/images/pokemon/main-sprites/black-white/{{poke.id}}.png" alt="{{poke.identifier|title}}">{{poke.identifier | title }}</a></td>
-                <td>
-                {% for type in poke.types %}
-               	 <a href="/types/{{type.id}}" class="type-display type-{{type.identifier}}">
-               	 	{{type.identifier|upper}}
-               	 </a>
-                {% endfor %}
-                </td>
-                <td>
-                {% if (poke.abilities[1]) is defined %}
-                	<a href="/abilities/{{poke.abilities[1].id}}">
-                	{{poke.abilities[1].identifier | title}}</a>
-                {% else %}
-                	--
-                {% endif %}
-                </td>
-                <td>
-                {% if (poke.abilities[2]) is defined %}
-                	<a href="/abilities/{{poke.abilities[2].id}}">
-                	{{poke.abilities[2].identifier | title}}</a>
-                {% else %}
-                	--
-                {% endif %}
-                </td>
-                <td>
-                {% if (poke.abilities[3]) is defined %}
-                	<a href="/abilities/{{poke.abilities[3].id}}">
-                	{{poke.abilities[3].identifier | title}}</a>
-                {% else %}
-                	--
-                {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-                </tbody>
-            
-        </table>
-    </div>
-</div>
-{% endblock %}
+        <div class="col-xs-12 col-md-6 col-lg-4">
+            <div class="row  justify-content-center">
+                <h3>Pokemon with {{ identifier | title}}</h3>
+            </div>
+            <div class="row  justify-content-center">
+                   
+                <table class="table table-striped table-fit table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sprite</th>
+                            <th>Pokemon</th>
+                            <th>Type</th>
+                            <th colspan="3" scope="colgroup">Abilities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for poke in pokemon %}
+                        <tr valign="middle" class="center">
+                            <td>
+                                <a href="/pokemon/{{poke.id}}">
+                                <img class="pokemon-img-small" src="/images/sprites/pokemon/{{poke.id}}.png" alt="{{poke.identifier|title}}">
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/pokemon/{{poke.id}}">{{poke.identifier | title }}</a>
+                            </td>
+                            <td>
+                                {% for type in poke.types %}
+                                <a href="/types/{{type.id}}" class="type-display type-{{type.identifier}}">
+                                    {{type.identifier|upper}}
+                                </a>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if (poke.abilities[1]) is defined %}
+                                <a href="/abilities/{{poke.abilities[1].id}}">
+                                    {{poke.abilities[1].identifier | title}}</a>
+                                {% else %} -- {% endif %}
+                            </td>
+                            <td>
+                                {% if (poke.abilities[2]) is defined %}
+                                <a href="/abilities/{{poke.abilities[2].id}}">
+                                    {{poke.abilities[2].identifier | title}}</a>
+                                {% else %} -- {% endif %}
+                            </td>
+                            <td>
+                                {% if (poke.abilities[3]) is defined %}
+                                <a href="/abilities/{{poke.abilities[3].id}}">
+                                    {{poke.abilities[3].identifier | title}}</a>
+                                {% else %} -- {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+        {% endblock %}

@@ -1,4 +1,4 @@
 /vendor/
 /web/cache
-/web/images/pokemon
+/web/images/
 /*.sqlite

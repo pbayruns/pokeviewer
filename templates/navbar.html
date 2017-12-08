@@ -1,6 +1,6 @@
 {% block nav %}
-<nav class="navbar navbar-expand-md bg-dark navbar-dark">
-  <a class="navbar-brand" href="/">Pokeviewer</a>
+<nav class="navbar navbar-expand-md navbar-inverse pokemon-style-display">
+  <a class="navbar-brand" href="/"><img src="/android-chrome-192x192.png" style="height: 1.5em; margin-right:2px;">Pokeviewer</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -22,7 +22,7 @@
   </div>
   <form class="form-inline">
       <input class="form-control" type="text" placeholder="Search">
-      <button class="btn btn-success my-2 my-sm-0" type="button">Search</button>
+      <button class="btn btn-transparent btn-red my-2 my-sm-0" type="button">Search</button>
     </form>
 </nav>
 {% endblock %}

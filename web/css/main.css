@@ -15,19 +15,33 @@ html, body {
 	height: 100%;
 	width: 100%;
 	overflow-x: hidden;
-	background: #F1F7ED !important;
+	background: #dadada ;
 	font-family: 'Work Sans', sans-serif !important;
 }
 #wrapper{
 	height: 100%;
 	width: 100%;
 }
-nav{
+.navbar{
 	margin-bottom: 50px;
-	width: 100%;
-	background: #293132;
+	color: #FFF;
+	background: rgb(255, 56, 56);
+    border-width: 0px;
+    -webkit-box-shadow: 0px 2px 2px rgba(0,0,0,0.2);
+    box-shadow: 0px 2px 2px rgba(0,0,0,0.2);
 }
-
+.navbar-inverse .navbar-nav li a {
+    color: #F1F7ED;
+}
+.navbar-inverse .navbar-nav li a:hover {
+    color: rgb(255, 181, 177);
+}
+.navbar-brand{
+	color: #FFF;
+}
+.navbar-brand:hover{
+	color: #FFF;
+}
 .btn-transparent {
 	background: transparent;
 	color: #ECF0F1;
@@ -104,6 +118,8 @@ nav{
 	text-shadow: rgb(51, 51, 51) 2px 2px 2px;
 }
 .inner-pokemon-card{
+	height: 100%;
+	padding-bottom: 10px;	
 	border: 5px solid rgba(255,255,255, 0.30);
 }
 
@@ -136,7 +152,6 @@ nav{
     margin: 0 auto;
     height: auto;
     width: 100%;
-	background: rgba(13,171,118,0.41);
 }
 
 .pokemon-info-tabs > li {
@@ -168,18 +183,17 @@ nav{
 }
 
 .ability-jumbotron{
-	background: #FE5F55 !important;
 	color: #F1F7ED !important;
 }
 
 .image-cropper {
-	margin-bottom: 25px;
-	margin-top: 25px;
+	
     margin-left:auto;
 	margin-right:auto;
 	
 	display:block;
-    width: 50%;
+	width: 50%;
+	min-width: 100px;
 	max-width: 250px;
 	max-height: 250px;
     overflow: hidden;
@@ -188,12 +202,8 @@ nav{
 	background: none;
 }
 
-.pokemon-info-img{
-	display: inline;
-    margin: 0 auto;
-    height: auto;
-    width: 100%;
-	background: rgba(13,171,118,0.41);
+.evolution-img{
+	margin: 0px 50px;
 }
 
 .pokemon-info-tabs > li {
@@ -267,15 +277,29 @@ nav{
 ************TYPE DISPLAYS**********
 ***********************************
 */
-
+.pokemon-style-display{
+	font-family: "Fira Sans","Trebuchet MS","Tahoma","Ubuntu","Helvetica","Arial",sans-serif;
+	border-radius: 3px;
+	color: #FFF;
+	text-decoration-color: #FFF;
+	text-shadow: rgb(51, 51, 51) 1px 1px 1px
+}
+.filter-button{
+	margin-left: 10px !important;
+	margin-right: 10px !important;
+	display: inline;
+}
 .type-display{
 	font-family: "Fira Sans","Trebuchet MS","Tahoma","Ubuntu","Helvetica","Arial",sans-serif;
 	cursor: pointer;
 	font-size: 10px;
+	text-align: center;
 	border-radius: 3px;
+	display: inline-block;
 	color: #FFF;
+	min-width: 65px !important;
 	padding: 5px 10px;
-	margin: 1px 0px;
+	margin: 5px 0px;
 	border: 1px solid rgba(0,0,0, 0.25);
 	text-transform: uppercase;
 	text-decoration-color: #FFF;
