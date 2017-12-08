@@ -290,12 +290,18 @@ $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( 
 	$statSQL = getQueryJSONArray($STATS, $statFields);
 	$moveSQL = getQueryJSONArray($MOVES, $moveFields);
 	
-	$sql = "SELECT p.*, "
+	$sql = "SELECT p.*, ps.*, efrom.identifier AS 'evolves_from_identifier', 
+							efrom.id AS 'evolves_from_id',
+							eto.id AS 'evolves_to_id', 
+							eto.identifier AS 'evolves_to_identifier', "
 		.$typesSQL.	 	" , "
 		.$abilitySQL.	" , "
 		.$statSQL.		" , "
 		.$moveSQL.
 	" FROM pokemon p
+	JOIN pokemon_species ps ON (ps.id = p.species_id)
+	LEFT JOIN pokemon_species efrom ON (efrom.id = ps.evolves_from_species_id)
+	LEFT JOIN pokemon_species eto ON (eto.evolves_from_species_id = ps.id)
 	JOIN pokemon_types pt ON (p.id = pt.pokemon_id)
 	JOIN types t ON (pt.type_id = t.id)
 	JOIN pokemon_abilities pa ON (pa.pokemon_id = p.id)
@@ -313,6 +319,8 @@ $app->get( URLS[SPECIFIC_POKEMON], function (Silex\Application $app, $id) use ( 
 	$stmt->bindValue('id', $id, PDO::PARAM_INT);
 	$stmt->execute();
 	$pokemon = $stmt->fetchAll();
+	//print_r($pokemon);
+	
 	if(isset($pokemon) && count($pokemon) == 1){
 		$pokemon = $pokemon[0];
 	}else{

@@ -2,8 +2,8 @@
 {% block content %}
 {% include "navbar.html" %}
 <div id="wrapper">
-    <div class="row justify-content-center pokemon-style-display">
-            <h1>All Abilities</h1>
+    <div class="row justify-content-center">
+            <h1 class="montserrat-bold">ALL ABILITIES</h1>
         </div>
     <div class="row justify-content-center " >
         <table id="move-table" class="stripe row-border">
@@ -18,7 +18,8 @@
             
             {% for ability in abilities %}
             <tr>
-                <td><a href="/abilities/{{ability.id}}">{{ability.identifier|title}}</a></td>
+                {% set href = ability.is_main_series ? "/abilities/" ~ ability.id : "#"%}
+                <td><a href="{{href}}">{{ability.identifier|title}}</a></td>
                 <td>{{ability.generation | default('--')}}</td>
                 <td>{{ ability.is_main_series ? 'Yes':'No' }}</td>
             </tr>

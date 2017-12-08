@@ -2,29 +2,39 @@
 
 <div id="wrapper">
   <div class="row justify-content-center pokemon-style-display">
-    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
-      <div class="image-cropper type-{{types[0].identifier}}">
-        <img class="pokemon-info-img" src="/images/sprites/pokemon/{{id}}.png" alt="Card image cap" />
-      </div>
-      <div>
-      <table style="margin:auto">
-        <tr>
-          <td>
-            <div class="image-cropper evolution-img type-{{types[0].identifier}}">
-              <img class="pokemon-info-img" src="/images/sprites/pokemon/{{id}}.png" alt="Card image cap" />
-            </div>
-          </td>
-          <td>
-            <div class="image-cropper evolution-img type-{{types[0].identifier}}">
-              <img class="pokemon-info-img" src="/images/sprites/pokemon/{{id}}.png" alt="Card image cap" />
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
+    <div id="poke-info-col" class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
       <div class="text-center">
         <h1>{{ identifier | title}}</h1>
         <h3>#{{order}}</h3>
+      </div>
+      <div id="current_poke" class="image-cropper type-{{types[0].identifier}}">
+        <img class="pokemon-info-img" src="/images/sprites/pokemon/{{id}}.png" alt="Card image cap" />
+      </div>
+      <div>
+        <table style="margin:auto">
+          <tr>
+            <td>
+              {% if evolves_from_id is defined and evolves_from_id is not null %}
+              <div id="evolves_from" class="image-cropper evolution-img type-{{types[0].identifier}}">
+                <a href="/pokemon/{{evolves_from_id}}">
+                  <img class="pokemon-info-img" src="/images/sprites/pokemon/{{evolves_from_id}}.png" alt="Card image cap" />
+                </a>
+              </div>
+              Evolves from {{evolves_from_identifier | title }} {% endif %}
+
+            </td>
+            <td>
+              {% if evolves_to_id is defined and evolves_to_id is not null %}
+              <div id="evolves_to" class="image-cropper evolution-img type-{{types[0].identifier}}">
+                <a href="/pokemon/{{evolves_to_id}}">
+                  <img class="pokemon-info-img" src="/images/sprites/pokemon/{{evolves_to_id}}.png" alt="Card image cap" />
+                </a>
+              </div>
+              Evolves into {{evolves_to_identifier | title}} {% endif %}
+            </td>
+          </tr>
+        </table>
+
       </div>
     </div>
   </div>
@@ -142,6 +152,7 @@
   jQuery(document).ready(function () {
     const MAX_STAT = 255;
 
+    
     $('.progress-circle').each(function () {
       var color = $(this).data().color;
       var percent = $(this).data().value / MAX_STAT;
