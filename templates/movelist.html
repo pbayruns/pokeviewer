@@ -1,46 +1,53 @@
-{% extends "layout.html" %}
-{% block content %}
-{% include "navbar.html" %}
+{% extends "layout.html" %} {% block content %} {% include "navbar.html" %}
 <div id="wrapper">
     <div class="row justify-content-center">
-            <h1 class="montserrat-bold">ALL MOVES</h1>
-        </div>
-    <div class="row justify-content-center " >
-        <table id="move-table" class="stripe row-border">
-            <thead class="pokemon-style-display">
-                <tr>
-                    <th>Move</th>
-                    <th>Type</th>
-                    <th>Power</th>
-                    <th>PP</th>
-                    <th>Acc.</th>
-                    <th>Priority</th>
-                    <th>Target</th>
-                    <th>Cat.</th>
-                </tr>
-            </thead>
-            <tbody>
-            
-            {% for move in moves %}
-            <tr>
-                <td><a href="/move/{{move.id}}">{{move.identifier|title}}</a></td>
-                <td><span class="type-display type-{{move.type}}">{{move.type}}</span></td>
-                <td>{{move.power | default('--')}}</td>
-                <td>{{move.pp}}</td>
-                <td>{{move.accuracy | default('--')}}</td>
-                <td>{{move.priority}}</td>
-                <td>{{move.target_id}}</td>
-                <td><img src="/images/icons/{{move.damage_type}}.png" alt={{move.damage_type}}></td>
-            </tr>
-
-            {% endfor %}
-                </tbody>
-        </table>
+        <h1 class="montserrat-bold">ALL MOVES</h1>
     </div>
-    <script>
-            $(document).ready(function(){
-                $('#move-table').DataTable();
-            });
-    </script>
+    <div class="row justify-content-center ">
+        <div class="col-xs-12 col-md-10 col-lg-6">
+            <table id="move-table" class="stripe row-border pokemon-style-display table-background table-sm">
+                <thead class="pokemon-style-display">
+                    <tr>
+                        <th>Move</th>
+                        <th>Type</th>
+                        <th>Power</th>
+                        <th>PP</th>
+                        <th>Acc.</th>
+                        <th>Priority</th>
+                        <th>Target</th>
+                        <th>Cat.</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for move in moves %}
+                    <tr>
+                        <td>
+                            <a href="/move/{{move.id}}">{{move.identifier|title}}</a>
+                        </td>
+                        <td>
+                            <span class="type-display type-{{move.type}}">{{move.type}}</span>
+                        </td>
+                        <td>{{move.power | default('--')}}</td>
+                        <td>{{move.pp}}</td>
+                        <td>{{move.accuracy | default('--')}}</td>
+                        <td>{{move.priority}}</td>
+                        <td>{{move.target_id}}</td>
+                        <td>
+                            <img src="/images/icons/{{move.damage_type}}.png" alt={{move.damage_type}}>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-{% endblock %} 
+<script>
+    $(document).ready(function () {
+        $('#move-table').DataTable();
+    });
+</script>
+</div>
+{% endblock %}

@@ -4,75 +4,69 @@
 
 
 
-   
 
-    <!-- Custom styles for this template -->
-    <link href="/css/agency.css" rel="stylesheet">
 
-    <!-- Header -->
-    <header class="masthead" id="header-image">
-        <div class="container">
-            <div class="intro-text" id="header-intro-text">
-                <div class="intro-heading text-uppercase">Welcome to Pokeviewer</div>
-                <a class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="#services">See Site Areas</a>
+<!-- Custom styles for this template -->
+<link href="/css/agency.css" rel="stylesheet">
+
+<!-- Header -->
+<header class="masthead" id="header-image">
+    <div class="container">
+        <div class="intro-text" id="header-intro-text">
+            <div class="intro-heading text-uppercase">Welcome to Pokeviewer</div>
+            <a class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="#services">See Site Areas</a>
+        </div>
+    </div>
+</header>
+
+<!-- Services -->
+<section id="services">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-heading text-uppercase">Site Areas</h2>
+                <h3 class="section-subheading text-muted">(Hopefully you can find what you're looking for here)</h3>
             </div>
         </div>
-    </header>
-
-    <!-- Services -->
-    <section id="services">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading text-uppercase">Site Areas</h2>
-                    <h3 class="section-subheading text-muted">(Hopefully you can find what you're looking for here)</h3>
-                </div>
-            </div>
-            <div class="row text-center">
-                <div class="col-md-4 site-area">
+        <div class="row text-center">
+            <div class="col-md-4 site-area" onClick="window.location='/pokemon';">
                     <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                        <i class="fa fa-circle fa-stack-2x"></i>
                         <i class="fa fa-paw fa-stack-1x fa-inverse"></i>
                     </span>
-                    <h4 class="service-heading">Pokemon</h4>
-                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore
-                        harum ex magni, dicta impedit.</p>
-                </div>
-                <div class="col-md-4 site-area">
+                <h4 class="service-heading">Pokemon</h4>
+            </div>
+            <div class="col-md-4 site-area" onClick="window.location='/abilities';">
                     <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                        <i class="fa fa-circle fa-stack-2x"></i>
                         <i class="fa fa-star fa-stack-1x fa-inverse"></i>
                     </span>
-                    <h4 class="service-heading">Abilities</h4>
-                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore
-                        harum ex magni, dicta impedit.</p>
-                </div>
-                <div class="col-md-4 site-area">
+                <h4 class="service-heading">Abilities</h4>
+            </div>
+            <div class="col-md-4 site-area" onClick="window.location='/moves';">
                     <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                        <i class="fa fa-circle fa-stack-2x"></i>
                         <i class="fa fa-bolt fa-stack-1x fa-inverse"></i>
                     </span>
-                    <h4 class="service-heading">Moves</h4>
-                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore
-                        harum ex magni, dicta impedit.</p>
-                </div>
+                <h4 class="service-heading">Moves</h4>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Custom scripts for this template -->
-    <script>
-        function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min)) + min;
-        }
+<!-- Custom scripts for this template -->
+<script>
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
 
-        window.onload = function () {
-            var header = document.getElementById("header-image");
-            var rand = getRandomInt(1, 151);
-            var img = '/images/headers/' + rand + '.jpg';
-            header.style.background = "url(" + img + ")";
-        }
-    </script>
-    {% endblock %}
+    window.onload = function () {
+        var header = document.getElementById("header-image");
+        var rand = getRandomInt(1, 151);
+        var img = '/images/headers/' + rand + '.jpg';
+        header.style.background = "url(" + img + ")";
+    }
+</script>
+{% endblock %}

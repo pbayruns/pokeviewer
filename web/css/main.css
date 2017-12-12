@@ -11,12 +11,17 @@ MINT 20FC8F
 OFF-BLACK: 293132
 
 */
-html, body {
+html {
 	height: 100%;
 	width: 100%;
 	overflow-x: hidden;
-	background: #dadada ;
+	background-color: rgba(0, 0, 0, 0.459);
+	background-image: url("/images/pokemonbw.jpg");
 	font-family: 'Work Sans', sans-serif !important;
+}
+body{
+	background: rgba(209, 209, 209, 0.61);
+	min-height: 100vh;	
 }
 .connectingLines{
 	color: #000 !important;
@@ -32,13 +37,24 @@ html, body {
 	font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
 }
 .navbar{
-	
 	margin-bottom: 50px;
 	color: #FFF;
 	background: #fe3636;
     border-width: 0px;
     -webkit-box-shadow: 0px 2px 2px rgba(0,0,0,0.2);
     box-shadow: 0px 2px 2px rgba(0,0,0,0.2);
+}
+
+h1{
+	margin-bottom: 25px;
+	margin-top: 60px;
+}
+.row.justify-content-center {
+	
+}
+.background-cover{
+	margin-top: 50px;
+	background: rgba(209, 209, 209, 0.822);
 }
 .navbar-inverse .navbar-nav li a {
     color: #F1F7ED;
@@ -52,6 +68,28 @@ html, body {
 .navbar-brand:hover{
 	color: #FFF;
 }
+
+.btn {
+    padding: 14px 24px;
+    border: 0 none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+ 
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: 0 none;
+}
+
+.btn-primary {
+	background-color: #fe3636;
+	border-color: #fe3636; }
+	.btn-primary:active, .btn-primary:focus, .btn-primary:hover {
+	  background-color: #fe1010 !important;
+	  border-color: #fe1010 !important;
+	  color: white; }
+	.btn-primary:active, .btn-primary:focus {
+	  box-shadow: 0 0 0 0.2rem rgba(254, 209, 55, 0.5) !important; }
 .btn-transparent {
 	background: transparent;
 	color: #ECF0F1;
@@ -60,6 +98,9 @@ html, body {
 	-o-transition: background .2s ease-in-out, border .2s ease-in-out;
 	transition: background .2s ease-in-out, border .2s ease-in-out;
 	border: 1px solid #fff;
+}
+.btn-primary:hover{
+	cursor: pointer;
 }
 .btn-transparent:hover {
 	color: #058ED9;
@@ -88,6 +129,87 @@ html, body {
 	color: #FE5F55;
 }
 
+.site-area{
+	color: #FE5F55;
+	transition: all 0.3s ease-in-out;	
+	-webkit-transition: all 0.3s ease-in-out;
+}
+
+.site-area:hover{
+	color: rgb(255, 29, 17);
+	cursor: pointer;
+	padding-top: 10px;		
+	transition: all 0.3s ease-in-out;	
+	-webkit-transition: all 0.3s ease-in-out;	
+}
+@keyframes fill {
+	0% {
+	  height: 0%;
+	}
+	60% {
+	  height: 110%;
+	}
+	70% {
+	  height: 95%;
+	}
+	80% {
+	  height: 105%;
+	}
+	100% {
+	  height: 100%;
+	}
+  }
+  
+  .box {
+	width: 150px;
+	height: 125px;
+	position: relative;
+	display: inline-block;
+  }
+  
+  .box .container {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	bottom: 0;
+	z-index: 3;
+	text-align: center;
+	color: white;
+	font-size: 14px;
+	padding-top: 15px;
+  }
+  
+  .box .container .number {
+	font-size: 50px;
+	margin-top: 25px;
+  }
+  
+  .box .fill {
+	z-index: 2;
+	border-radius: 3px;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	bottom: 0;
+  }
+  
+  .box .fill.speed1 {
+	animation: fill 1s ease-out;
+  }
+  
+  .box .fill.speed2 {
+	animation: fill 1.1s ease-out;
+  }
+  
+  .box .fill.speed3 {
+	animation: fill 1.2s ease-out;
+  }
+  
+  .box .fill.speed4 {
+	animation: fill 1.3s ease-out;
+  }
+  
 
 .ability-link{
 	color: inherit !important;
@@ -126,11 +248,20 @@ html, body {
 	text-transform: uppercase;
 	text-decoration-color: #FFF;
 	text-shadow: rgb(51, 51, 51) 2px 2px 2px;
+	-webkit-transition: all .3s ease-in-out;
+	-moz-transition: all .3s ease-in-out;
+	-o-transition: all .3s ease-in-out;
+	transition: all .3s ease-in-out;
+
 }
 .inner-pokemon-card{
 	height: 100%;
 	padding-bottom: 10px;	
 	border: 5px solid rgba(255,255,255, 0.30);
+	-webkit-transition:border .2s ease-in-out;
+	-moz-transition: border .2s ease-in-out;
+	-o-transition: border .2s ease-in-out;
+	transition: border .2s ease-in-out;
 }
 
 .inner-pokemon-card:hover {
@@ -139,6 +270,11 @@ html, body {
 	cursor: pointer;
 }
 
+.poke-title{
+	display: inline-block;
+	border-radius: 5px;
+	border: 1px solid #000;
+}
 /*
 **************************************
 ******SPECIFIC POKEMON PAGE***********
@@ -226,6 +362,18 @@ html, body {
 
 .table-fit {
 	width: auto !important;
+
+}
+
+td > a{
+	color: #FFF !important;
+	text-decoration: underline;
+	font-weight: 500;
+}
+
+.table-background{
+	background: rgba(0, 0, 0, 0.363);
+	width: 100% !important;
 }
 
 .table > tbody > tr > td {
@@ -447,3 +595,4 @@ html, body {
     background-image: linear-gradient(#68a090,#4e7c6f);
     border-color: #41685d
 }
+

@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block content %} {% include "navbar.html" %}
 
 <div id="wrapper">
-  <div class="row justify-content-center pokemon-style-display">
+  <div class="row justify-content-center pokemon-style-display ">
     <div id="poke-info-col" class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
       <div class="text-center">
         <h1>{{ identifier | title}}</h1>
@@ -13,7 +13,7 @@
       <div>
         <table style="margin:auto">
           <tr>
-            <td>
+            <td class="text-center">
               {% if evolves_from_id is defined and evolves_from_id is not null %}
               <div id="evolves_from" class="image-cropper evolution-img type-{{types[0].identifier}}">
                 <a href="/pokemon/{{evolves_from_id}}">
@@ -23,7 +23,7 @@
               Evolves from {{evolves_from_identifier | title }} {% endif %}
 
             </td>
-            <td>
+            <td class="text-center">
               {% if evolves_to_id is defined and evolves_to_id is not null %}
               <div id="evolves_to" class="image-cropper evolution-img type-{{types[0].identifier}}">
                 <a href="/pokemon/{{evolves_to_id}}">
@@ -87,8 +87,8 @@
       </div>
     </div>
   </div>
-  <div class="row justify-content-center">
-    <h2>Base Stats</h2>
+  <div class="row justify-content-center pokemon-style-display">
+    <h1>{{identifier | title}}'s Base Stats</h1>
   </div>
   <div class="row justify-content-center">
     <div class="col-xs-12 col-sm-10 col-md-8">
@@ -97,21 +97,23 @@
         %} {% set colors = {"hp":"#ff0000", "attack":"#f08030", "defense":"#f8d030", "special-attack":"#6890f0", "special-defense":"#78c850",
         "speed":"#f85888"} %} {% for stat in stats|sort %}
 
-        <div class="col-xs-4 col-md-3 col-lg-2">
-          <div class="card text-center stat-card">
-            <div class="card-block">
-              <h4 class="card-title" style="color:{{attribute(colors, stat.identifier)}};">{{attribute(names, stat.identifier)}}</h4>
+        <div class="box">
+            <div class="container">
+              <span class="number">{{stat.base_stat}}</span>
+              <br />
+              <h4>{{attribute(names, stat.identifier)}} </h4>
             </div>
-            <div class="card-img-bottom progress-circle" id="progress-{{stat.identifier}}" name="progress-{{stat.identifier}}" data-label="{{stat.base_stat}}"
-              data-value="{{stat.base_stat}}" data-color="{{attribute(colors, stat.identifier)}}"></div>
-          </div>
-        </div>
+            <div class="fill speed{{random(3)+1}}" style="background : {{attribute(colors, stat.identifier)}}; "></div>
+          </div> 
         {% endfor %}
+        
       </div>
     </div>
   </div>
-  <div class="row justify-content-center">
-    <table class="table table-striped table-fit table-hover">
+  <div class="row justify-content-center pokemon-style-display">
+    <div class="col-xs-12 col-md-10 col-lg-6 text-center">
+      <h1>{{identifier | title}}'s Learnset:</h1>
+    <table id="poke-move-table" class="table pokemon-style-display type-{{types[0].identifier}} table-inverse table-sm">
       <thead>
         <tr>
           <th>Lvl.</th>
@@ -142,15 +144,41 @@
         </tr>
         {% endfor %}
       </tbody>
-
     </table>
+  </div>
   </div>
 </div>
 </div>
-<script src="/js/progressbar.min.js"></script>
 <script>
   jQuery(document).ready(function () {
     const MAX_STAT = 255;
+
+      $('#poke-move-table').DataTable();
+
+    function increment(){
+      $('.box').hide();
+      setTimeout(function(){
+        $('.box').show();
+      },100);
+    
+      $('.number').each(function(){
+        var $this = $(this),
+            value = $this.text();
+        $({someValue: 0}).animate({someValue: value}, {
+          duration: 1200,
+          easing:'swing', 
+          step: function() {      
+            $this.text(Math.round(this.someValue));
+          },
+          complete: function() {
+            $this.text(value);
+          }
+        });
+      });  
+    }
+    
+    increment(); 
+    
 
     
     $('.progress-circle').each(function () {
